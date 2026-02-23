@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — OncoMind</title>
+    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Главная</a>
+                <a href="team.html" class="nav-link">О команде</a>
+                <a href="solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="register.html" class="btn btn-nav">Регистрация</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- БЛОК ВХОДА -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <h1>Вход в систему</h1>
+                
+                <!-- Форма входа -->
+                <form id="loginForm" class="auth-form">
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required placeholder="example@mail.ru">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input type="password" id="password" name="password" required placeholder="Введите пароль">
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" name="remember">
+                            <span>Запомнить меня</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Войти</button>
+
+                    <div class="auth-footer">
+                        <p>Нет аккаунта? <a href="register.html">Зарегистрироваться</a></p>
+                        <p><a href="#" id="forgotPassword">Забыли пароль?</a></p>
+                    </div>
+
+                    <div id="formMessage" class="form-message"></div>
+
+                    <div style="margin-top: 20px; text-align: center;">
+                        <a href="test-login.html" style="color: var(--text-muted); font-size: 14px;">
+                            <i class="fas fa-flask"></i> Тестовые аккаунты для разработки
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="index.html">Главная</a>
+                <a href="team.html">О команде</a>
+                <a href="solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

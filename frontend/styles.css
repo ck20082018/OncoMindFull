@@ -1,0 +1,841 @@
+/* ===== ОСНОВНЫЕ СТИЛИ ===== */
+:root {
+    /* Основные цвета */
+    --primary-dark: #0a2472;        /* Глубокий индиго */
+    --primary-deep: #1e3a8a;         /* Королевский синий */
+    --primary-blue: #2563eb;          /* Яркий синий */
+    --primary-light: #3b82f6;         /* Средний синий */
+    --accent-soft: #60a5fa;           /* Светло-синий */
+    --accent-glow: #38bdf8;           /* Небесно-голубой */
+    
+    /* Фоновые цвета */
+    --bg-white: #ffffff;
+    --bg-light: #f4f7fb;
+    --bg-card: #ffffff;
+    
+    /* Текст */
+    --text-dark: #0b1e33;
+    --text-primary: #1e2b3c;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    /* Градиенты */
+    --gradient-main: linear-gradient(
+        135deg,
+        hsl(225, 90%, 15%) 0%,
+        hsl(235, 85%, 25%) 25%,
+        hsl(225, 90%, 35%) 50%,
+        hsl(210, 90%, 45%) 75%,
+        hsl(200, 90%, 55%) 100%
+    );
+    
+    --gradient-card: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.95),
+        rgba(244, 247, 251, 0.98)
+    );
+    
+    --gradient-button: linear-gradient(
+        135deg,
+        #1e3a8a,
+        #3b82f6,
+        #60a5fa
+    );
+    
+    --gradient-heading: linear-gradient(
+        135deg,
+        #0a2472,
+        #1e3a8a,
+        #2563eb,
+        #3b82f6
+    );
+    
+    /* Свечение и тени */
+    --glow-blue: 0 0 30px rgba(37, 99, 235, 0.2);
+    --glow-accent: 0 0 40px rgba(96, 165, 250, 0.3);
+    --shadow-sm: 0 5px 20px rgba(0, 0, 0, 0.03), 0 2px 5px rgba(0, 20, 50, 0.02);
+    --shadow-md: 0 10px 30px rgba(10, 36, 114, 0.08), 0 5px 15px rgba(0, 0, 0, 0.02);
+    --shadow-lg: 0 20px 40px rgba(10, 36, 114, 0.12), 0 10px 20px rgba(0, 0, 0, 0.03);
+    --shadow-xl: 0 30px 60px rgba(10, 36, 114, 0.15);
+    
+    /* Скругления */
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 30px;
+    --radius-xl: 40px;
+    --radius-full: 999px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--bg-light);
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Фон с градиентом */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(96, 165, 250, 0.03) 0%, transparent 50%),
+        linear-gradient(135deg, #f0f5ff 0%, #ffffff 50%, #f5f9ff 100%);
+    z-index: -2;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== ШАПКА ===== */
+.header {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.logo {
+    font-size: 30px;
+    font-weight: 800;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+
+.nav-menu {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    padding: 8px 0;
+}
+
+.nav-link:hover {
+    color: var(--primary-blue);
+}
+
+.nav-link.active {
+    color: var(--primary-deep);
+    font-weight: 600;
+    position: relative;
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--gradient-main);
+    border-radius: 3px;
+}
+
+/* Кнопка регистрации в навигации */
+.btn-nav {
+    padding: 10px 24px;
+    font-size: 14px;
+    background: var(--gradient-button);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+}
+
+.btn-nav:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+}
+
+/* ===== ОСНОВНЫЕ БЛОКИ ===== */
+section {
+    padding: 80px 0;
+}
+
+h1 {
+    font-size: 52px;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    background: var(--gradient-heading);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: 40px;
+    margin-bottom: 48px;
+    text-align: center;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--gradient-main);
+    border-radius: 4px;
+}
+
+/* ===== HERO БЛОК ===== */
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: 100px 0;
+}
+
+.hero-content {
+    max-width: 700px;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    line-height: 1.7;
+}
+
+.btn {
+    display: inline-block;
+    padding: 16px 40px;
+    background: var(--gradient-button);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 30px -5px rgba(37, 99, 235, 0.4);
+}
+
+/* ===== СЕТКА КАРТОЧЕК ===== */
+.grid-2, .grid-3, .grid-4 {
+    display: grid;
+    gap: 30px;
+}
+
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+.card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 32px 24px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-light);
+}
+
+.card i {
+    color: var(--primary-blue);
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+/* ===== МЕТРИКИ (без градиента - обычный цвет) ===== */
+.metric-card {
+    text-align: center;
+}
+
+.metric-number {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--primary-deep) !important;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: var(--primary-deep) !important;
+}
+
+.metric-label {
+    font-size: 16px;
+    color: var(--primary-blue) !important;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: var(--primary-blue) !important;
+}
+
+.metric-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* ===== КАРТОЧКИ КОМАНДЫ ===== */
+.team-card {
+    text-align: center;
+    padding: 32px 20px;
+}
+
+.team-photo {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: var(--gradient-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid white;
+    box-shadow: var(--shadow-lg);
+}
+
+.team-photo i {
+    color: white;
+    font-size: 80px;
+    background: none;
+}
+
+.team-name {
+    font-size: 24px;
+    font-weight: 700;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.team-role {
+    color: var(--primary-blue);
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.team-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 16px;
+    background: var(--bg-light);
+    border-radius: var(--radius-full);
+    transition: all 0.3s ease;
+}
+
+.team-contact:hover {
+    background: var(--primary-blue);
+    color: white;
+}
+
+/* ===== БЛОК С ИКОНКАМИ ===== */
+.icon-block {
+    text-align: center;
+}
+
+.icon-wrapper {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(96,165,250,0.1));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    border: 2px solid var(--primary-light);
+}
+
+.icon-wrapper i {
+    font-size: 40px;
+    color: var(--primary-blue);
+}
+
+.icon-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===== БЛОК ЦИТАТЫ ===== */
+.quote-block {
+    background: var(--gradient-main);
+    color: white;
+    text-align: center;
+    padding: 80px 0;
+}
+
+.quote-text {
+    font-size: 28px;
+    font-weight: 300;
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.5;
+    color: white;
+}
+
+/* ===== ПОДВАЛ ===== */
+.footer {
+    background: white;
+    border-top: 1px solid #e2e8f0;
+    padding: 40px 0;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    color: var(--primary-blue);
+}
+
+.footer-contact {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.footer-contact a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.footer-contact a:hover {
+    color: var(--primary-blue);
+}
+
+/* ===== МЕДИА-ЗАПРОСЫ ===== */
+@media (max-width: 1024px) {
+    h1 { font-size: 44px; }
+    h2 { font-size: 36px; }
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 36px; }
+    h2 { font-size: 30px; }
+    
+    .burger-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        cursor: pointer;
+        padding: 10px;
+    }
+    
+    .burger-line {
+        width: 30px;
+        height: 3px;
+        background: var(--primary-blue);
+        border-radius: 3px;
+        transition: all 0.3s ease;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: white;
+        flex-direction: column;
+        padding: 100px 40px;
+        box-shadow: var(--shadow-xl);
+        transition: right 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .nav-menu.active { right: 0; }
+    
+    .burger-menu.active .burger-line:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px);
+    }
+    
+    .burger-menu.active .burger-line:nth-child(2) { opacity: 0; }
+    
+    .burger-menu.active .burger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
+    
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .footer-content { flex-direction: column; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 28px; }
+    .hero-subtitle { font-size: 16px; }
+    .metric-number { font-size: 36px; }
+    .quote-text { font-size: 20px; }
+}
+
+/* ===== СПЕЦИАЛЬНЫЕ ПРАВИЛА ===== */
+/* Для блока технологий */
+section[style*="background: linear-gradient(135deg, #0a2472"] .card i,
+section[style*="background: linear-gradient(135deg, #0a2472"] i {
+    color: white !important;
+    background: none !important;
+}
+
+/* ===== СТРАНИЦА РЕГИСТРАЦИИ ===== */
+.auth-section {
+    min-height: calc(100vh - 400px);
+    padding: 60px 0;
+}
+
+.auth-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid #e2e8f0;
+}
+
+.auth-container h1 {
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 36px;
+}
+
+/* Переключатель ролей */
+.role-switcher {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.role-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    background: var(--bg-light);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.role-btn i {
+    font-size: 32px;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+.role-btn:hover {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: var(--primary-light);
+}
+
+.role-btn.active {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: var(--primary-blue);
+    color: var(--primary-deep);
+}
+
+.role-btn.active i {
+    color: var(--primary-blue);
+}
+
+/* Форма */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Checkbox */
+.checkbox-group label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+/* Drag-and-drop зона */
+.dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-light);
+}
+
+.dropzone:hover,
+.dropzone.dragover {
+    border-color: var(--primary-blue);
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.dropzone i {
+    font-size: 48px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+}
+
+.dropzone p {
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.dropzone small {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* Список файлов */
+.file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-light);
+    border-radius: var(--radius-sm);
+    border: 1px solid #e2e8f0;
+}
+
+.file-item i {
+    color: var(--primary-blue);
+    font-size: 20px;
+}
+
+.file-name {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.file-size {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.file-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    transition: all 0.3s ease;
+}
+
+.file-remove:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Кнопки */
+.btn-primary {
+    background: var(--gradient-button);
+    color: white;
+}
+
+.btn-block {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Сообщения формы */
+.form-message {
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    text-align: center;
+    display: none;
+}
+
+.form-message.success {
+    display: block;
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.form-message.error {
+    display: block;
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Подвал формы */
+.auth-footer {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.auth-footer a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Адаптив для регистрации */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 32px 24px;
+    }
+
+    .role-switcher {
+        flex-direction: column;
+    }
+
+    .role-btn {
+        flex-direction: row;
+        justify-content: center;
+        padding: 14px 20px;
+    }
+
+    .role-btn i {
+        font-size: 24px;
+        margin-right: 8px;
+        margin-bottom: 0;
+    }
+}

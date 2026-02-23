@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Клинические рекомендации</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .guidelines-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .guidelines-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .guidelines-search {
+            display: flex;
+            gap: 15px;
+            flex: 1;
+            max-width: 500px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-full);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-full);
+            background: white;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+        
+        .guidelines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .guideline-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guideline-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+        
+        .guideline-card.new::before {
+            content: 'NEW';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: #ef4444;
+            color: white;
+            padding: 5px 40px;
+            font-size: 12px;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+        
+        .guideline-source {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-blue);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .guideline-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .guideline-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .guideline-meta i {
+            margin-right: 5px;
+        }
+        
+        .guideline-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .guideline-tag {
+            padding: 4px 12px;
+            background: var(--bg-light);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .guideline-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .guideline-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+        }
+        
+        .status-current {
+            color: #10b981;
+        }
+        
+        .status-updated {
+            color: #f59e0b;
+        }
+        
+        .guideline-btn {
+            padding: 8px 16px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .guideline-btn:hover {
+            background: var(--primary-deep);
+            transform: translateX(3px);
+        }
+        
+        /* Модальное окно просмотра */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            padding: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .guideline-viewer {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.8;
+        }
+        
+        .guideline-viewer h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            background: none;
+            -webkit-text-fill-color: var(--text-dark);
+        }
+        
+        .guideline-viewer h2 {
+            font-size: 24px;
+            margin: 30px 0 15px;
+            background: none;
+            -webkit-text-fill-color: var(--text-dark);
+            text-align: left;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .guideline-viewer h2::after {
+            display: none;
+        }
+        
+        .guideline-viewer h3 {
+            font-size: 20px;
+            margin: 25px 0 10px;
+            color: var(--text-dark);
+        }
+        
+        .guideline-viewer p {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .guideline-viewer ul, .guideline-viewer ol {
+            margin: 15px 0 15px 25px;
+        }
+        
+        .guideline-viewer li {
+            margin-bottom: 8px;
+        }
+        
+        .guideline-viewer table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .guideline-viewer th {
+            background: var(--bg-light);
+            padding: 12px;
+            font-weight: 600;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .guideline-viewer td {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .guideline-viewer .recommendation-box {
+            background: rgba(37, 99, 235, 0.05);
+            border-left: 4px solid var(--primary-blue);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+        
+        .viewer-toolbar {
+            position: sticky;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        .viewer-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .viewer-btn:hover {
+            transform: scale(1.1);
+            background: var(--primary-deep);
+        }
+        
+        @media (max-width: 768px) {
+            .guidelines-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .guidelines-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .guidelines-search {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="dashboard.html" class="nav-link">Кабинет</a>
+                <a href="profile.html" class="nav-link">Профиль</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ШАПКА КАБИНЕТА -->
+    <div class="doctor-header" style="background: white; padding: 20px 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 40px;">
+        <div class="container">
+            <div class="doctor-info" style="display: flex; align-items: center; gap: 20px;">
+                <div class="doctor-avatar" style="width: 60px; height: 60px; border-radius: 50%; background: var(--gradient-main); display: flex; align-items: center; justify-content: center; color: white; font-size: 30px;">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div>
+                    <div class="doctor-name" id="doctorName" style="font-size: 24px; font-weight: 700; color: var(--text-dark);">Загрузка...</div>
+                    <div class="doctor-specialization" id="doctorSpecialization" style="color: var(--primary-blue);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <section>
+        <div class="container guidelines-container">
+            <div class="guidelines-header">
+                <h1 style="margin: 0;">Клинические рекомендации</h1>
+                
+                <div class="guidelines-search">
+                    <input type="text" class="search-input" placeholder="Поиск по рекомендациям..." id="searchInput">
+                    <button class="btn btn-primary" onclick="searchGuidelines()" style="padding: 14px 30px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="filter-buttons" id="filterButtons">
+                <button class="filter-btn active" onclick="filterGuidelines('all')">Все</button>
+                <button class="filter-btn" onclick="filterGuidelines('minzdrav')">Минздрав РФ</button>
+                <button class="filter-btn" onclick="filterGuidelines('nccn')">NCCN</button>
+                <button class="filter-btn" onclick="filterGuidelines('esmo')">ESMO</button>
+                <button class="filter-btn" onclick="filterGuidelines('new')">Новые</button>
+                <button class="filter-btn" onclick="filterGuidelines('updated')">Обновлённые</button>
+            </div>
+            
+            <div class="guidelines-grid" id="guidelinesGrid">
+                <!-- Карточки загружаются через JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПРОСМОТРА -->
+    <div class="modal" id="guidelineModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            
+            <div class="modal-header">
+                <h2 id="modalTitle" style="margin: 0; padding-right: 40px;"></h2>
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <span class="guideline-source" id="modalSource"></span>
+                    <span style="color: var(--text-muted);" id="modalDate"></span>
+                </div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="guideline-viewer" id="modalContent">
+                    <!-- Содержимое загружается через JavaScript -->
+                </div>
+                
+                <div class="viewer-toolbar">
+                    <button class="viewer-btn" onclick="downloadGuideline()" title="Скачать PDF">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="viewer-btn" onclick="printGuideline()" title="Печать">
+                        <i class="fas fa-print"></i>
+                    </button>
+                    <button class="viewer-btn" onclick="shareGuideline()" title="Поделиться">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentFilter = 'all';
+        let guidelinesData = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!user || user.role !== 'doctor') {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            document.getElementById('doctorName').textContent = user.full_name;
+            if (user.specialization) {
+                document.getElementById('doctorSpecialization').textContent = user.specialization;
+            }
+            
+            loadGuidelines();
+        });
+        
+        // Загрузка рекомендаций
+        async function loadGuidelines() {
+            // Имитация загрузки данных
+            guidelinesData = [
+                {
+                    id: 'breast-cancer-2026',
+                    title: 'Рак молочной железы. Клинические рекомендации',
+                    source: 'Минздрав РФ',
+                    date: '20.02.2026',
+                    version: '2026',
+                    isNew: true,
+                    tags: ['Маммология', 'Химиотерапия', 'Гормонотерапия'],
+                    status: 'current',
+                    description: 'Актуальные рекомендации по диагностике и лечению рака молочной железы.',
+                    content: `
+                        <h1>Клинические рекомендации. Рак молочной железы</h1>
+                        <p><strong>Год утверждения:</strong> 2026</p>
+                        
+                        <h2>1. Классификация</h2>
+                        <p>Рекомендуется использование TNM классификации 8-го пересмотра.</p>
+                        
+                        <h2>2. Диагностика</h2>
+                        <div class="recommendation-box">
+                            <p><strong>Уровень убедительности рекомендаций A</strong></p>
+                            <p>Всем пациентам с подозрением на РМЖ рекомендуется выполнение:</p>
+                            <ul>
+                                <li>Маммографии</li>
+                                <li>УЗИ молочных желёз и регионарных зон</li>
+                                <li>Трепан-биопсии с гистологическим исследованием</li>
+                                <li>Иммуногистохимического исследования (ER, PR, HER2, Ki67)</li>
+                            </ul>
+                        </div>
+                        
+                        <h2>3. Лечение</h2>
+                        <h3>3.1. Хирургическое лечение</h3>
+                        <p>При I-IIA стадиях предпочтительны органосохраняющие операции.</p>
+                        
+                        <h3>3.2. Лекарственная терапия</h3>
+                        <table>
+                            <tr>
+                                <th>Подтип</th>
+                                <th>Рекомендуемая терапия</th>
+                            </tr>
+                            <tr>
+                                <td>Luminal A</td>
+                                <td>Эндокринотерапия</td>
+                            </tr>
+                            <tr>
+                                <td>Luminal B HER2-</td>
+                                <td>ХТ + эндокринотерапия</td>
+                            </tr>
+                            <tr>
+                                <td>HER2+</td>
+                                <td>ХТ + анти-HER2 терапия</td>
+                            </tr>
+                            <tr>
+                                <td>Тройной негативный</td>
+                                <td>ХТ</td>
+                            </tr>
+                        </table>
+                        
+                        <h2>4. Схемы химиотерапии</h2>
+                        <div class="recommendation-box">
+                            <p><strong>Схема AC-T</strong></p>
+                            <p>Доксорубицин 60 мг/м² + Циклофосфамид 600 мг/м² каждые 2-3 нед × 4 цикла, затем Паклитаксел 80 мг/м² еженедельно × 12 нед</p>
+                        </div>
+                    `
+                },
+                {
+                    id: 'lung-cancer-2026',
+                    title: 'Рак лёгкого. Изменения в схеме иммунотерапии',
+                    source: 'Минздрав РФ',
+                    date: '15.02.2026',
+                    version: '2026',
+                    isNew: true,
+                    tags: ['Пульмонология', 'Иммунотерапия'],
+                    status: 'updated'
+                },
+                {
+                    id: 'melanoma-2026',
+                    title: 'Меланома. Новые подходы к таргетной терапии',
+                    source: 'NCCN',
+                    date: '10.02.2026',
+                    version: 'v.3.2026',
+                    tags: ['Дерматология', 'Таргетная терапия'],
+                    status: 'updated'
+                },
+                {
+                    id: 'colorectal-2026',
+                    title: 'Колоректальный рак. Адъювантная терапия',
+                    source: 'ESMO',
+                    date: '05.02.2026',
+                    version: '2026',
+                    tags: ['Гастроэнтерология', 'Химиотерапия'],
+                    status: 'current'
+                },
+                {
+                    id: 'prostate-2026',
+                    title: 'Рак предстательной железы',
+                    source: 'Минздрав РФ',
+                    date: '28.01.2026',
+                    version: '2026',
+                    tags: ['Урология', 'Гормонотерапия'],
+                    status: 'current'
+                },
+                {
+                    id: 'ovarian-2026',
+                    title: 'Рак яичников. Поддерживающая терапия',
+                    source: 'NCCN',
+                    date: '20.01.2026',
+                    version: 'v.2.2026',
+                    tags: ['Гинекология', 'Химиотерапия'],
+                    status: 'current'
+                }
+            ];
+            
+            renderGuidelines(guidelinesData);
+        }
+        
+        // Отрисовка карточек
+        function renderGuidelines(guidelines) {
+            const grid = document.getElementById('guidelinesGrid');
+            let html = '';
+            
+            guidelines.forEach(guideline => {
+                html += `
+                    <div class="guideline-card ${guideline.isNew ? 'new' : ''}" onclick="openGuideline('${guideline.id}')">
+                        <span class="guideline-source">${guideline.source}</span>
+                        <div class="guideline-title">${guideline.title}</div>
+                        <div class="guideline-meta">
+                            <span><i class="far fa-calendar"></i> ${guideline.date}</span>
+                            <span><i class="far fa-file-alt"></i> вер. ${guideline.version}</span>
+                        </div>
+                        <div class="guideline-tags">
+                            ${guideline.tags.map(tag => `<span class="guideline-tag">${tag}</span>`).join('')}
+                        </div>
+                        ${guideline.description ? `<p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">${guideline.description}</p>` : ''}
+                        <div class="guideline-footer">
+                            <div class="guideline-status">
+                                ${guideline.status === 'current' 
+                                    ? '<i class="fas fa-check-circle status-current"></i><span class="status-current">Действующая</span>' 
+                                    : '<i class="fas fa-exclamation-circle status-updated"></i><span class="status-updated">Обновлена</span>'}
+                            </div>
+                            <span class="guideline-btn">Читать <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        // Фильтрация
+        function filterGuidelines(filter) {
+            currentFilter = filter;
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            let filtered = [];
+            
+            if (filter === 'all') {
+                filtered = guidelinesData;
+            } else if (filter === 'minzdrav') {
+                filtered = guidelinesData.filter(g => g.source === 'Минздрав РФ');
+            } else if (filter === 'nccn') {
+                filtered = guidelinesData.filter(g => g.source === 'NCCN');
+            } else if (filter === 'esmo') {
+                filtered = guidelinesData.filter(g => g.source === 'ESMO');
+            } else if (filter === 'new') {
+                filtered = guidelinesData.filter(g => g.isNew);
+            } else if (filter === 'updated') {
+                filtered = guidelinesData.filter(g => g.status === 'updated');
+            }
+            
+            renderGuidelines(filtered);
+        }
+        
+        // Поиск
+        function searchGuidelines() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!query) {
+                renderGuidelines(guidelinesData);
+                return;
+            }
+            
+            const filtered = guidelinesData.filter(g => 
+                g.title.toLowerCase().includes(query) ||
+                g.tags.some(tag => tag.toLowerCase().includes(query)) ||
+                (g.description && g.description.toLowerCase().includes(query))
+            );
+            
+            renderGuidelines(filtered);
+        }
+        
+        // Открытие рекомендации
+        function openGuideline(id) {
+            const guideline = guidelinesData.find(g => g.id === id);
+            if (!guideline) return;
+            
+            document.getElementById('modalTitle').textContent = guideline.title;
+            document.getElementById('modalSource').textContent = guideline.source;
+            document.getElementById('modalDate').textContent = `Версия ${guideline.version} • ${guideline.date}`;
+            
+            // Если есть полный контент, показываем его, иначе заглушку
+            if (guideline.content) {
+                document.getElementById('modalContent').innerHTML = guideline.content;
+            } else {
+                document.getElementById('modalContent').innerHTML = `
+                    <h1>${guideline.title}</h1>
+                    <p><strong>Источник:</strong> ${guideline.source}</p>
+                    <p><strong>Дата публикации:</strong> ${guideline.date}</p>
+                    <p><strong>Версия:</strong> ${guideline.version}</p>
+                    <div style="background: var(--bg-light); padding: 30px; text-align: center; border-radius: var(--radius-md); margin-top: 30px;">
+                        <i class="fas fa-file-pdf" style="font-size: 60px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                        <p>Полный текст рекомендации доступен для скачивания в формате PDF</p>
+                        <button class="btn btn-primary" onclick="downloadGuideline()" style="margin-top: 20px;">
+                            <i class="fas fa-download"></i> Скачать PDF
+                        </button>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('guidelineModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.getElementById('guidelineModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function downloadGuideline() {
+            alert('Скачивание PDF...');
+            // TODO: Реальный запрос к API
+        }
+        
+        function printGuideline() {
+            window.print();
+        }
+        
+        function shareGuideline() {
+            alert('Функция поделиться будет доступна позже');
+        }
+        
+        // Закрытие модального окна по клику вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('guidelineModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

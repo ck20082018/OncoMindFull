@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Скачать анамнез</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .download-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .preview-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-md);
+            margin: 40px 0;
+        }
+        
+        .pdf-icon {
+            font-size: 100px;
+            color: var(--primary-blue);
+            margin-bottom: 30px;
+        }
+        
+        .file-info {
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 30px 0;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        
+        .file-info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .file-info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px 50px;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        
+        .format-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .format-btn {
+            padding: 15px 30px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .format-btn:hover {
+            border-color: var(--primary-blue);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .format-btn.active {
+            border-color: var(--primary-blue);
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .format-btn i {
+            font-size: 24px;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .history-list {
+            margin-top: 50px;
+            text-align: left;
+        }
+        
+        .history-item {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            transform: translateX(5px);
+            border-color: var(--primary-blue);
+        }
+        
+        .history-item i {
+            font-size: 30px;
+            color: var(--primary-blue);
+        }
+        
+        .history-info {
+            flex: 1;
+        }
+        
+        .history-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .history-date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="dashboard.html" class="nav-link">Кабинет</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <section>
+        <div class="container download-container">
+            <h1 style="margin-bottom: 20px;">История болезни</h1>
+            
+            <div class="preview-card">
+                <div class="pdf-icon">
+                    <i class="fas fa-file-medical-alt"></i>
+                </div>
+                
+                <h2 style="margin-bottom: 10px;">Ваш анамнез</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 30px;">Скачайте вашу историю болезни в удобном формате</p>
+                
+                <div class="file-info">
+                    <div class="file-info-item">
+                        <span class="info-label">Пациент:</span>
+                        <span class="info-value" id="patientName">Иванов Иван Иванович</span>
+                    </div>
+                    <div class="file-info-item">
+                        <span class="info-label">Дата рождения:</span>
+                        <span class="info-value" id="patientBirthDate">15.03.1965</span>
+                    </div>
+                    <div class="file-info-item">
+                        <span class="info-label">Диагноз:</span>
+                        <span class="info-value" id="patientDiagnosis">Рак молочной железы T2N1M0</span>
+                    </div>
+                    <div class="file-info-item">
+                        <span class="info-label">Дата формирования:</span>
+                        <span class="info-value" id="currentDate"></span>
+                    </div>
+                    <div class="file-info-item">
+                        <span class="info-label">Размер файла:</span>
+                        <span class="info-value">~2.4 MB</span>
+                    </div>
+                </div>
+                
+                <div class="format-buttons">
+                    <div class="format-btn active" onclick="setFormat('pdf')" id="pdfBtn">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>PDF</span>
+                    </div>
+                    <div class="format-btn" onclick="setFormat('docx')" id="docxBtn">
+                        <i class="fas fa-file-word"></i>
+                        <span>DOCX</span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary download-btn" onclick="downloadFile()">
+                    <i class="fas fa-download"></i>
+                    Скачать анамнез
+                </button>
+            </div>
+            
+            <div class="history-list">
+                <h3 style="margin-bottom: 20px;">Предыдущие выгрузки</h3>
+                
+                <div class="history-item" onclick="downloadHistory('2026-02-20')">
+                    <i class="fas fa-file-pdf"></i>
+                    <div class="history-info">
+                        <div class="history-title">Анамнез от 20.02.2026</div>
+                        <div class="history-date">PDF • 2.1 MB</div>
+                    </div>
+                    <i class="fas fa-download" style="color: var(--primary-blue);"></i>
+                </div>
+                
+                <div class="history-item" onclick="downloadHistory('2026-02-15')">
+                    <i class="fas fa-file-pdf"></i>
+                    <div class="history-info">
+                        <div class="history-title">Анамнез от 15.02.2026</div>
+                        <div class="history-date">PDF • 1.8 MB</div>
+                    </div>
+                    <i class="fas fa-download" style="color: var(--primary-blue);"></i>
+                </div>
+                
+                <div class="history-item" onclick="downloadHistory('2026-02-10')">
+                    <i class="fas fa-file-word"></i>
+                    <div class="history-info">
+                        <div class="history-title">Анамнез от 10.02.2026</div>
+                        <div class="history-date">DOCX • 1.5 MB</div>
+                    </div>
+                    <i class="fas fa-download" style="color: var(--primary-blue);"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentFormat = 'pdf';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'patient') {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            // Заполняем данные
+            document.getElementById('patientName').textContent = user.full_name;
+            
+            const answers = JSON.parse(localStorage.getItem('patientAnswers') || '[]');
+            if (answers[2]) { // Диагноз
+                document.getElementById('patientDiagnosis').textContent = answers[2];
+            }
+            
+            const today = new Date();
+            document.getElementById('currentDate').textContent = today.toLocaleDateString('ru-RU');
+        });
+        
+        function setFormat(format) {
+            currentFormat = format;
+            
+            document.getElementById('pdfBtn').classList.toggle('active', format === 'pdf');
+            document.getElementById('docxBtn').classList.toggle('active', format === 'docx');
+        }
+        
+        function downloadFile() {
+            // Создаём содержимое файла
+            const content = generateFileContent();
+            
+            if (currentFormat === 'pdf') {
+                // Для PDF используем print
+                window.print();
+            } else {
+                // Для DOCX создаём и скачиваем файл
+                const blob = new Blob([content], { type: 'application/msword' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `anamnez_${new Date().toISOString().split('T')[0]}.docx`;
+                a.click();
+            }
+            
+            // TODO: Здесь будет реальный запрос к API для генерации PDF
+            /*
+            fetch('http://localhost:5000/api/patient/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    format: currentFormat
+                })
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `anamnez.${currentFormat}`;
+                a.click();
+            });
+            */
+        }
+        
+        function generateFileContent() {
+            const userName = document.getElementById('patientName').textContent;
+            const diagnosis = document.getElementById('patientDiagnosis').textContent;
+            const date = document.getElementById('currentDate').textContent;
+            
+            const answers = JSON.parse(localStorage.getItem('patientAnswers') || '[]');
+            
+            return `
+                ИСТОРИЯ БОЛЕЗНИ
+                Пациент: ${userName}
+                Дата рождения: ${answers[1] || 'не указана'}
+                Диагноз: ${diagnosis}
+                Дата постановки диагноза: ${answers[3] || 'не указана'}
+                
+                АНАМНЕЗ
+                ${answers[4] || 'Информация отсутствует'}
+                
+                ЛЕЧЕНИЕ
+                ${answers[5] || 'Информация отсутствует'}
+                
+                Дата формирования: ${date}
+                
+                Сформировано с помощью OncoMind AI
+            `;
+        }
+        
+        function downloadHistory(date) {
+            alert(`Скачивание анамнеза от ${date}`);
+            // TODO: Запрос к API для скачивания предыдущей версии
+        }
+        
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

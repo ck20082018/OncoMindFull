@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Кабинет пациента</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .patient-header {
+            background: white;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 40px;
+        }
+        
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .patient-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 30px;
+        }
+        
+        .patient-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .functions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .function-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .function-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+        
+        .function-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(96,165,250,0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            border: 2px solid var(--primary-light);
+        }
+        
+        .function-icon i {
+            font-size: 40px;
+            color: var(--primary-blue);
+        }
+        
+        .function-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+        
+        .function-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .functions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ШАПКА КАБИНЕТА -->
+    <div class="patient-header">
+        <div class="container">
+            <div class="patient-info">
+                <div class="patient-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div class="patient-name" id="patientName">Загрузка...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <section>
+        <div class="container">
+            <h2 style="text-align: left; margin-bottom: 20px;">Мои возможности</h2>
+            
+            <div class="functions-grid">
+                <div class="function-card" onclick="location.href='voice-questionnaire.html'">
+                    <div class="function-icon">
+                        <i class="fas fa-microphone-alt"></i>
+                    </div>
+                    <h3>Голосовой сбор анамнеза</h3>
+                    <p>Ответьте на вопросы голосом, мы запишем и структурируем информацию о вашей истории болезни</p>
+                </div>
+                
+                <div class="function-card" onclick="location.href='explanation.html'">
+                    <div class="function-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Объяснение простым языком</h3>
+                    <p>Узнайте простыми словами о вашем заболевании и лечении</p>
+                </div>
+                
+                <div class="function-card" onclick="location.href='download.html'">
+                    <div class="function-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3>Скачать анамнез</h3>
+                    <p>Получите PDF файл с вашей историей болезни в удобном формате</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!user) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            if (user.role !== 'patient') {
+                alert('Этот раздел только для пациентов');
+                window.location.href = '../index.html';
+                return;
+            }
+            
+            document.getElementById('patientName').textContent = user.full_name;
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

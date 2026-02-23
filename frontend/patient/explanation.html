@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Объяснение простым языком</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .explanation-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 50px;
+            box-shadow: var(--shadow-md);
+            margin: 40px auto;
+            max-width: 800px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+        
+        .explanation-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 30px;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(96,165,250,0.05));
+            border-left: 4px solid var(--primary-blue);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            margin: 30px 0;
+        }
+        
+        .medication-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .medication-item {
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .medication-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+        
+        .medication-purpose {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .questions-list {
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            padding: 30px;
+        }
+        
+        .question-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .question-item:last-child {
+            border-bottom: none;
+        }
+        
+        .question-item i {
+            color: var(--primary-blue);
+            font-size: 20px;
+            margin-top: 2px;
+        }
+        
+        .question-text {
+            flex: 1;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+        
+        .print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .print-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="dashboard.html" class="nav-link">Кабинет</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <section>
+        <div class="container">
+            <div class="explanation-card" id="explanationContent">
+                <h1 style="text-align: center; margin-bottom: 20px;">Ваш диагноз простым языком</h1>
+                
+                <div class="section-title">Что у вас?</div>
+                <div class="explanation-text" id="diagnosisExplanation">
+                    У вас обнаружено заболевание молочной железы. Это значит, что некоторые клетки в молочной железе начали расти и делиться быстрее, чем нужно. Такие клетки называются опухолевыми. Хорошая новость: болезнь обнаружена на ранней стадии, когда лечение наиболее эффективно.
+                </div>
+                
+                <div class="highlight-box">
+                    <i class="fas fa-heart" style="color: var(--primary-blue); font-size: 24px; margin-right: 15px;"></i>
+                    <strong>Важно знать:</strong> Рак молочной железы на ранней стадии успешно лечится у 90% пациентов. Вы не одиноки в этой борьбе.
+                </div>
+                
+                <div class="section-title">Что означает стадия?</div>
+                <div class="explanation-text" id="stageExplanation">
+                    Ваша стадия (IIB) означает, что опухоль имеет размер около 2-5 см, и есть небольшое поражение лимфатических узлов. Это локальное заболевание, оно не распространилось на другие органы. Это хорошая новость — такое состояние хорошо поддается лечению.
+                </div>
+                
+                <div class="section-title">Ваше лечение</div>
+                <div class="explanation-text" id="treatmentExplanation">
+                    Вам назначена химиотерапия перед операцией. Это называется "неоадъювантная химиотерапия". Лекарства помогут уменьшить размер опухоли перед операцией, что сделает операцию более щадящей и эффективной.
+                </div>
+                
+                <div class="medication-list" id="medicationsList">
+                    <div class="medication-item">
+                        <div class="medication-name">Доксорубицин (Красная химиотерапия)</div>
+                        <div class="medication-purpose">Основное лекарство, которое останавливает рост опухолевых клеток. Называется "красным" из-за цвета раствора.</div>
+                    </div>
+                    <div class="medication-item">
+                        <div class="medication-name">Циклофосфамид</div>
+                        <div class="medication-purpose">Помогает основному лекарству работать лучше, усиливая его действие.</div>
+                    </div>
+                    <div class="medication-item">
+                        <div class="medication-name">Паклитаксел</div>
+                        <div class="medication-purpose">Дополнительное лекарство, которое назначают после первых двух для закрепления результата.</div>
+                    </div>
+                </div>
+                
+                <div class="section-title">Что может беспокоить?</div>
+                <div class="explanation-text" id="sideEffectsExplanation">
+                    Во время лечения вы можете заметить:
+                    <ul style="margin-top: 15px; margin-left: 20px;">
+                        <li><strong>Выпадение волос</strong> - это временно, волосы вырастут после лечения</li>
+                        <li><strong>Тошноту</strong> - врач даст таблетки, которые помогут</li>
+                        <li><strong>Усталость</strong> - больше отдыхайте, гуляйте на свежем воздухе</li>
+                    </ul>
+                </div>
+                
+                <div class="section-title">Что дальше?</div>
+                <div class="explanation-text" id="nextStepsExplanation">
+                    <ol style="margin-left: 20px;">
+                        <li>Пройдите обследование сердца перед началом лечения</li>
+                        <li>Начните первый курс химиотерапии</li>
+                        <li>После 4 курсов - контрольное обследование</li>
+                        <li>Операция через 4-6 недель после химиотерапии</li>
+                    </ol>
+                </div>
+                
+                <div class="section-title">Вопросы, которые можно задать врачу</div>
+                <div class="questions-list" id="questionsList">
+                    <div class="question-item">
+                        <i class="fas fa-question-circle"></i>
+                        <div class="question-text">Сколько всего будет курсов химиотерапии?</div>
+                    </div>
+                    <div class="question-item">
+                        <i class="fas fa-question-circle"></i>
+                        <div class="question-text">Какие симптомы требуют срочно позвонить врачу?</div>
+                    </div>
+                    <div class="question-item">
+                        <i class="fas fa-question-circle"></i>
+                        <div class="question-text">Можно ли принимать витамины во время лечения?</div>
+                    </div>
+                    <div class="question-item">
+                        <i class="fas fa-question-circle"></i>
+                        <div class="question-text">Когда я смогу вернуться к работе?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <button class="print-btn" onclick="window.print()" title="Сохранить как PDF">
+        <i class="fas fa-print"></i>
+    </button>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'patient') {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            // Загружаем ответы из голосового опросника
+            const answers = JSON.parse(localStorage.getItem('patientAnswers') || '[]');
+            
+            // TODO: Здесь будет запрос к API для получения персонализированного объяснения
+            // На основе answers и данных пользователя
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

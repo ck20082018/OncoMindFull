@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Кабинет врача</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Дополнительные стили для кабинета врача */
+        .doctor-header {
+            background: white;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 40px;
+        }
+        
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 30px;
+        }
+        
+        .doctor-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .doctor-specialization {
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+        
+        .functions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .function-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .function-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+        
+        .function-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-main);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .function-card:hover::before {
+            opacity: 1;
+        }
+        
+        .function-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(96,165,250,0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            border: 2px solid var(--primary-light);
+        }
+        
+        .function-icon i {
+            font-size: 40px;
+            color: var(--primary-blue);
+        }
+        
+        .function-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+        
+        .function-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .function-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--primary-light);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .notification-panel {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+            margin-top: 40px;
+        }
+        
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .notification-header i {
+            font-size: 28px;
+            color: var(--primary-blue);
+        }
+        
+        .notification-header h2 {
+            font-size: 24px;
+            margin: 0;
+            background: none;
+            -webkit-text-fill-color: var(--text-dark);
+            padding: 0;
+        }
+        
+        .notification-header h2::after {
+            display: none;
+        }
+        
+        .notification-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .notification-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .notification-item:hover {
+            background: white;
+            border-color: var(--primary-light);
+            transform: translateX(5px);
+        }
+        
+        .notification-item.new {
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .notification-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .notification-badge {
+            padding: 4px 12px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .notification-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .functions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ШАПКА КАБИНЕТА -->
+    <div class="doctor-header">
+        <div class="container">
+            <div class="doctor-info">
+                <div class="doctor-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div>
+                    <div class="doctor-name" id="doctorName">Загрузка...</div>
+                    <div class="doctor-specialization" id="doctorSpecialization"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <section>
+        <div class="container">
+            <h2 style="text-align: left; margin-bottom: 20px; padding-bottom: 0;">Функции</h2>
+            
+            <!-- Сетка функций -->
+            <div class="functions-grid">
+                <!-- Функция 1: Проверка совместимости -->
+                <div class="function-card" onclick="location.href='analyze.html?mode=interaction'">
+                    <div class="function-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Проверка совместимости</h3>
+                    <p>Анализ взаимодействия назначенных препаратов с другими лекарствами. Выявление потенциальных конфликтов.</p>
+                    <span class="function-badge">Активное вещество</span>
+                </div>
+                
+                <!-- Функция 2: Поиск аналогов -->
+                <div class="function-card" onclick="location.href='analyze.html?mode=analogs'">
+                    <div class="function-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <h3>Поиск аналогов</h3>
+                    <p>Нейросеть подбирает аналоги по активному веществу, зарегистрированные в РФ. Сравнение цен и производителей.</p>
+                    <span class="function-badge">Зарегистрировано в РФ</span>
+                </div>
+                
+                <!-- Функция 3: Проверка тактики лечения -->
+                <div class="function-card" onclick="location.href='analyze.html?mode=treatment'">
+                    <div class="function-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <h3>Проверка тактики лечения</h3>
+                    <p>Сравнение вашего плана лечения с актуальными клиническими рекомендациями. Выявление ошибок.</p>
+                </div>
+            </div>
+
+            <!-- ПАНЕЛЬ УВЕДОМЛЕНИЙ -->
+            <div class="notification-panel">
+                <div class="notification-header">
+                    <i class="fas fa-bell"></i>
+                    <h2>Новые клинические рекомендации</h2>
+                </div>
+                
+                <div class="notification-list" id="notificationsList">
+                    <div class="notification-item new">
+                        <div class="notification-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Рак молочной железы. Клинические рекомендации 2026</div>
+                            <div class="notification-date">Обновлено: 20.02.2026</div>
+                        </div>
+                        <span class="notification-badge">Новое</span>
+                        <a href="#" class="notification-link" onclick="openGuideline('breast-cancer-2026')">Читать <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Рак лёгкого. Изменения в схеме иммунотерапии</div>
+                            <div class="notification-date">Обновлено: 15.02.2026</div>
+                        </div>
+                        <a href="#" class="notification-link" onclick="openGuideline('lung-cancer-2026')">Читать <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Меланома. Новые подходы к таргетной терапии</div>
+                            <div class="notification-date">Обновлено: 10.02.2026</div>
+                        </div>
+                        <a href="#" class="notification-link" onclick="openGuideline('melanoma-2026')">Читать <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="notification-item">
+                        <div class="notification-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">Колоректальный рак. Обновлённые рекомендации по адъювантной терапии</div>
+                            <div class="notification-date">Обновлено: 05.02.2026</div>
+                        </div>
+                        <a href="#" class="notification-link" onclick="openGuideline('colorectal-2026')">Читать <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Проверка авторизации при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            
+            if (!user) {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            if (user.role !== 'doctor') {
+                alert('Этот раздел только для врачей');
+                window.location.href = '../index.html';
+                return;
+            }
+            
+            // Заполняем информацию о враче
+            document.getElementById('doctorName').textContent = user.full_name;
+            if (user.specialization) {
+                document.getElementById('doctorSpecialization').textContent = user.specialization;
+            }
+            
+            // Загрузка уведомлений
+            loadNotifications();
+        });
+        
+        // Загрузка уведомлений с сервера
+        async function loadNotifications() {
+            try {
+                const response = await fetch('http://localhost:5000/api/doctor/guidelines/new');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateNotificationsList(data.notifications);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки уведомлений:', error);
+                // Показываем тестовые данные
+            }
+        }
+        
+        // Обновление списка уведомлений
+        function updateNotificationsList(notifications) {
+            const list = document.getElementById('notificationsList');
+            if (!list) return;
+            
+            let html = '';
+            notifications.forEach(notif => {
+                html += `
+                    <div class="notification-item ${notif.isNew ? 'new' : ''}">
+                        <div class="notification-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">${notif.title}</div>
+                            <div class="notification-date">Обновлено: ${notif.date}</div>
+                        </div>
+                        ${notif.isNew ? '<span class="notification-badge">Новое</span>' : ''}
+                        <a href="#" class="notification-link" onclick="openGuideline('${notif.id}')">Читать <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+        }
+        
+        // Открыть рекомендацию
+        function openGuideline(guidelineId) {
+            // Открыть в новой вкладке или модальном окне
+            window.open(`guidelines-viewer.html?id=${guidelineId}`, '_blank');
+        }
+        
+        // Выход
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

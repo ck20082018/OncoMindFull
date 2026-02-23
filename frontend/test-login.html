@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Тестовый вход</title>
+    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .test-header h1 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .test-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        
+        .card-header i {
+            font-size: 30px;
+            color: var(--primary-blue);
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-size: 24px;
+            background: none;
+            -webkit-text-fill-color: var(--text-dark);
+        }
+        
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .user-item:hover {
+            transform: translateX(5px);
+            border-color: var(--primary-blue);
+            background: white;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        
+        .user-detail {
+            font-size: 12px;
+            color: var(--primary-blue);
+        }
+        
+        .user-role-badge {
+            padding: 4px 12px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .quick-login-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--gradient-main);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .quick-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #f0f5ff, #ffffff);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            border: 1px solid var(--primary-light);
+            margin-top: 40px;
+        }
+        
+        .info-box h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-box li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .info-box li:last-child {
+            border-bottom: none;
+        }
+        
+        .info-box i {
+            color: var(--primary-blue);
+        }
+        
+        @media (max-width: 768px) {
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Главная</a>
+                <a href="team.html" class="nav-link">О команде</a>
+                <a href="solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="login.html" class="btn btn-nav">Обычный вход</a>
+            </nav>
+        </div>
+    </header>
+
+    <section>
+        <div class="container test-container">
+            <div class="test-header">
+                <h1>🧪 Тестовый вход в систему</h1>
+                <p>Используйте эти аккаунты для быстрого тестирования функционала</p>
+            </div>
+            
+            <div class="test-grid">
+                <!-- Врачи -->
+                <div class="test-card">
+                    <div class="card-header">
+                        <i class="fas fa-user-md"></i>
+                        <h2>Врачи</h2>
+                    </div>
+                    
+                    <div class="user-list">
+                        <!-- Врач 1 -->
+                        <div class="user-item" onclick="quickLogin('doctor@oncomind.ai', 'Doctor123!', 'doctor')">
+                            <div class="user-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">Александр Петрович Смирнов</div>
+                                <div class="user-email">doctor@oncomind.ai</div>
+                                <div class="user-detail">Онколог, химиотерапевт • Диплом: 12345678</div>
+                            </div>
+                            <span class="user-role-badge">Врач</span>
+                        </div>
+                        
+                        <!-- Врач 2 -->
+                        <div class="user-item" onclick="quickLogin('elena.doctor@oncomind.ai', 'Elena2026!', 'doctor')">
+                            <div class="user-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">Елена Владимировна Козлова</div>
+                                <div class="user-email">elena.doctor@oncomind.ai</div>
+                                <div class="user-detail">Онколог, радиотерапевт • Диплом: 87654321</div>
+                            </div>
+                            <span class="user-role-badge">Врач</span>
+                        </div>
+                    </div>
+                    
+                    <button class="quick-login-btn" onclick="quickLogin('doctor@oncomind.ai', 'Doctor123!', 'doctor')">
+                        <i class="fas fa-rocket"></i> Быстрый вход (основной врач)
+                    </button>
+                </div>
+                
+                <!-- Пациенты -->
+                <div class="test-card">
+                    <div class="card-header">
+                        <i class="fas fa-user"></i>
+                        <h2>Пациенты</h2>
+                    </div>
+                    
+                    <div class="user-list">
+                        <!-- Пациент 1 -->
+                        <div class="user-item" onclick="quickLogin('maria.patient@example.com', 'Maria2026!', 'patient')">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">Мария Ивановна Петрова</div>
+                                <div class="user-email">maria.patient@example.com</div>
+                                <div class="user-detail">Рак молочной железы • 15.03.1965</div>
+                            </div>
+                            <span class="user-role-badge">Пациент</span>
+                        </div>
+                        
+                        <!-- Пациент 2 -->
+                        <div class="user-item" onclick="quickLogin('ivan.patient@example.com', 'Ivan2026!', 'patient')">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">Иван Сергеевич Соколов</div>
+                                <div class="user-email">ivan.patient@example.com</div>
+                                <div class="user-detail">Рак лёгкого • 22.08.1958</div>
+                            </div>
+                            <span class="user-role-badge">Пациент</span>
+                        </div>
+                        
+                        <!-- Пациент 3 -->
+                        <div class="user-item" onclick="quickLogin('anna.test@example.com', 'Anna2026!', 'patient')">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">Анна Дмитриевна Новикова</div>
+                                <div class="user-email">anna.test@example.com</div>
+                                <div class="user-detail">Дата рождения: 03.12.1978</div>
+                            </div>
+                            <span class="user-role-badge">Пациент</span>
+                        </div>
+                    </div>
+                    
+                    <button class="quick-login-btn" onclick="quickLogin('maria.patient@example.com', 'Maria2026!', 'patient')">
+                        <i class="fas fa-rocket"></i> Быстрый вход (основной пациент)
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Информация -->
+            <div class="info-box">
+                <h3><i class="fas fa-info-circle"></i> Информация для тестирования</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <div>
+                        <h4 style="margin-bottom: 10px;">👨‍⚕️ Для врачей доступно:</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Проверка совместимости препаратов</li>
+                            <li><i class="fas fa-check-circle"></i> Поиск аналогов по активному веществу</li>
+                            <li><i class="fas fa-check-circle"></i> Проверка тактики лечения</li>
+                            <li><i class="fas fa-check-circle"></i> Клинические рекомендации</li>
+                            <li><i class="fas fa-check-circle"></i> Профиль с настройками</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 10px;">👤 Для пациентов доступно:</h4>
+                        <ul>
+                            <li><i class="fas fa-check-circle"></i> Голосовой сбор анамнеза</li>
+                            <li><i class="fas fa-check-circle"></i> Объяснение простым языком</li>
+                            <li><i class="fas fa-check-circle"></i> Скачивание PDF с анамнезом</li>
+                            <li><i class="fas fa-check-circle"></i> Профиль с документами</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(37,99,235,0.05); border-radius: var(--radius-md);">
+                    <p><i class="fas fa-lightbulb" style="color: #f59e0b;"></i> <strong>Совет:</strong> После входа вы попадёте в соответствующий кабинет. Для возврата на эту страницу используйте <code>/test-login.html</code></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="index.html">Главная</a>
+                <a href="team.html">О команде</a>
+                <a href="solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function quickLogin(email, password, role) {
+            try {
+                const response = await fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Сохраняем данные пользователя
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Показываем уведомление
+                    alert(`✅ Вход выполнен как ${data.user.full_name}`);
+                    
+                    // Перенаправляем в зависимости от роли
+                    if (role === 'doctor') {
+                        window.location.href = 'doctor/dashboard.html';
+                    } else {
+                        window.location.href = 'patient/dashboard.html';
+                    }
+                } else {
+                    alert('❌ Ошибка входа: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ Не удалось подключиться к серверу. Убедитесь, что бэкенд запущен (python backend/app.py)');
+            }
+        }
+        
+        // Добавляем тестовые данные в localStorage для демо (если сервер не запущен)
+        function demoLogin(email, name, role) {
+            const user = {
+                id: 'demo-' + Date.now(),
+                email: email,
+                full_name: name,
+                role: role,
+                diploma_number: role === 'doctor' ? '12345678' : null,
+                specialization: role === 'doctor' ? 'Онколог' : null,
+                clinic: role === 'doctor' ? 'Тестовая клиника' : null,
+                birth_date: role === 'patient' ? '15.03.1965' : null,
+                phone: role === 'patient' ? '+7 (999) 123-45-67' : null
+            };
+            
+            localStorage.setItem('user', JSON.stringify(user));
+            
+            if (role === 'doctor') {
+                window.location.href = 'doctor/dashboard.html';
+            } else {
+                window.location.href = 'patient/dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html>

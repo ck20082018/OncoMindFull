@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — ИИ для контроля онкологического лечения</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.svg">
+    <meta name="theme-color" content="#0066b3">
+    
+    <!-- CSS и FontAwesome -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- ШАПКА (Header) -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Главная</a>
+                <a href="team.html" class="nav-link">О команде</a>
+                <a href="solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="register.html" class="btn btn-nav">Регистрация</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO-БЛОК (ИСПРАВЛЕН - текст разбит на 2 строки) -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>
+                <span style="display: block;">Искусственный интеллект</span>
+                <span style="display: block;">для контроля онкологического лечения</span>
+            </h1>
+            <p class="hero-subtitle">AI-помощник, который автоматически проверяет соответствие плана лечения актуальным клиническим рекомендациям (NCCN, ESMO, Минздрав РФ) и помогает врачам не пропустить важные детали.</p>
+            <a href="solutions.html" class="btn">Наше решение</a>
+        </div>
+    </section>
+
+    <!-- БЛОК "Почему это важно?" -->
+    <section>
+        <div class="container">
+            <h2>Почему это важно?</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <i class="fas fa-clock" style="font-size: 40px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 24px; margin-bottom: 16px;">Обновления сложно отслеживать</h3>
+                    <p style="color: var(--text-gray);">Клиницисты могут уделять лишь около 4,6 часа в неделю на изучение новой информации, что создает разрыв между стандартами и реальным лечением.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 40px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 24px; margin-bottom: 16px;">Риск ошибок</h3>
+                    <p style="color: var(--text-gray);">У онкопациентов часто сложный анамнез с множеством назначений, некоторые из которых могут противоречить друг другу.</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-gavel" style="font-size: 40px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 24px; margin-bottom: 16px;">Обязательность стандартов</h3>
+                    <p style="color: var(--text-gray);">С 2025 года клинические рекомендации Минздрава РФ стали обязательными для всех врачей. Инструмент для автоматической проверки соответствия — это гарантия современной и доказательной терапии для каждого пациента.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК "Как работает OncoMind" -->
+    <section style="background: var(--light-gray);">
+        <div class="container">
+            <h2>Как работает OncoMind</h2>
+            <div style="max-width: 800px; margin: 0 auto 48px;">
+                <p style="font-size: 18px; color: var(--text-gray); text-align: center;">Мы разрабатываем интеллектуального помощника, который сопоставляет план лечения пациента с актуальными гайдлайнами, выявляет пропуски и конфликты в назначениях, а также предоставляет понятные объяснения для врачей и пациентов.</p>
+            </div>
+            
+            <!-- Схема работы -->
+            <div class="grid-4" style="margin-top: 40px;">
+                <div class="icon-block">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="icon-title">Данные пациента</div>
+                </div>
+                <div class="icon-block">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="icon-block">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="icon-title">AI анализ</div>
+                </div>
+                <div class="icon-block">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-file-medical-alt"></i>
+                    </div>
+                    <div class="icon-title">Результат</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- БЛОК "Метрики успешности" (ПОЛНОСТЬЮ ПЕРЕПИСАН) -->
+    <section>
+        <div class="container">
+            <h2>Ключевые показатели эффективности</h2>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px;">
+                
+                <!-- Метрика 1 -->
+                <div style="background: white; border-radius: 20px; padding: 32px 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                    <div style="font-size: 48px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; line-height: 1.2;">>95%</div>
+                    <div style="font-size: 16px; color: #2563eb; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Точность верификации</div>
+                    <div style="font-size: 14px; color: #64748b; line-height: 1.6;">Целевая точность идентификации соответствия/отклонения от стандартов</div>
+                </div>
+                
+                <!-- Метрика 2 -->
+                <div style="background: white; border-radius: 20px; padding: 32px 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                    <div style="font-size: 48px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; line-height: 1.2;">&lt;3 сек</div>
+                    <div style="font-size: 16px; color: #2563eb; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Скорость анализа</div>
+                    <div style="font-size: 14px; color: #64748b; line-height: 1.6;">Среднее время проверки одного клинического случая</div>
+                </div>
+                
+                <!-- Метрика 3 -->
+                <div style="background: white; border-radius: 20px; padding: 32px 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                    <div style="font-size: 48px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; line-height: 1.2;">10 000+</div>
+                    <div style="font-size: 16px; color: #2563eb; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Охват проверок</div>
+                    <div style="font-size: 14px; color: #64748b; line-height: 1.6;">Количество историй болезни в месяц</div>
+                </div>
+                
+                <!-- Метрика 4 -->
+                <div style="background: white; border-radius: 20px; padding: 32px 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                    <div style="font-size: 48px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; line-height: 1.2;">3</div>
+                    <div style="font-size: 16px; color: #2563eb; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Поддержка источников</div>
+                    <div style="font-size: 14px; color: #64748b; line-height: 1.6;">NCCN, ESMO, Минздрав РФ</div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК ЦИТАТЫ (ИСПРАВЛЕН - добавлены кавычки) -->
+    <section class="quote-block">
+        <div class="container">
+            <p class="quote-text">"Постоянный рост медицинских знаний больше не будет препятствием — искусственный интеллект поможет учесть все необходимые компоненты лечения, строго по лучшим мировым стандартам."</p>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ (Footer) -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="index.html">Главная</a>
+                <a href="team.html">О команде</a>
+                <a href="solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

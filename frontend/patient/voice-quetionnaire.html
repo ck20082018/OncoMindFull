@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Голосовой сбор анамнеза</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .voice-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+        
+        .question-number {
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .question-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 40px;
+            line-height: 1.3;
+        }
+        
+        .voice-controls {
+            margin: 40px 0;
+        }
+        
+        .mic-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            border: none;
+            color: white;
+            font-size: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3);
+        }
+        
+        .mic-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.4);
+        }
+        
+        .mic-button.recording {
+            background: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .status-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .transcription-box {
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+            min-height: 100px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-main);
+            transition: width 0.3s ease;
+        }
+        
+        .questions-list {
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .question-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .question-item.completed {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+        }
+        
+        .question-item i {
+            width: 20px;
+        }
+        
+        .question-item.completed i {
+            color: #22c55e;
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="dashboard.html" class="nav-link">Кабинет</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <section>
+        <div class="container voice-container">
+            <h1 style="text-align: center; margin-bottom: 40px;">Голосовой сбор анамнеза</h1>
+            
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">Вопрос 1 из 6</div>
+                <div class="question-text" id="questionText">Как вас зовут?</div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 16%"></div>
+                </div>
+                
+                <div class="voice-controls">
+                    <button class="mic-button" id="micButton">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <div class="status-text" id="statusText">Нажмите на микрофон и говорите</div>
+                </div>
+                
+                <div class="transcription-box" id="transcription">
+                    Ваш ответ появится здесь...
+                </div>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-outline" id="prevBtn" disabled>
+                        <i class="fas fa-arrow-left"></i> Назад
+                    </button>
+                    <button class="btn btn-primary" id="nextBtn">
+                        Далее <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                
+                <div class="questions-list" id="questionsList">
+                    <div class="question-item" data-question="1">
+                        <i class="fas fa-circle"></i>
+                        <span>Как вас зовут?</span>
+                    </div>
+                    <div class="question-item" data-question="2">
+                        <i class="fas fa-circle"></i>
+                        <span>Ваша дата рождения?</span>
+                    </div>
+                    <div class="question-item" data-question="3">
+                        <i class="fas fa-circle"></i>
+                        <span>Какой у вас диагноз?</span>
+                    </div>
+                    <div class="question-item" data-question="4">
+                        <i class="fas fa-circle"></i>
+                        <span>Когда поставили диагноз?</span>
+                    </div>
+                    <div class="question-item" data-question="5">
+                        <i class="fas fa-circle"></i>
+                        <span>Какое лечение вы проходите?</span>
+                    </div>
+                    <div class="question-item" data-question="6">
+                        <i class="fas fa-circle"></i>
+                        <span>Какие препараты принимаете?</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const questions = [
+            "Как вас зовут?",
+            "Ваша дата рождения?",
+            "Какой у вас диагноз?",
+            "Когда поставили диагноз?",
+            "Какое лечение вы проходите?",
+            "Какие препараты принимаете?"
+        ];
+        
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill('');
+        let isRecording = false;
+        let recognition;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'patient') {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            initSpeechRecognition();
+            updateQuestion();
+        });
+        
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'ru-RU';
+                
+                recognition.onresult = function(event) {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+                    
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+                    
+                    document.getElementById('transcription').innerHTML = 
+                        finalTranscript + '<i style="color: #999;">' + interimTranscript + '</i>';
+                    
+                    if (finalTranscript) {
+                        answers[currentQuestion] = finalTranscript;
+                        markQuestionCompleted(currentQuestion);
+                    }
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error('Ошибка распознавания:', event.error);
+                    stopRecording();
+                };
+            } else {
+                alert('Ваш браузер не поддерживает голосовой ввод');
+            }
+        }
+        
+        document.getElementById('micButton').addEventListener('click', toggleRecording);
+        
+        function toggleRecording() {
+            if (!recognition) return;
+            
+            if (isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+        
+        function startRecording() {
+            recognition.start();
+            isRecording = true;
+            document.getElementById('micButton').classList.add('recording');
+            document.getElementById('statusText').textContent = 'Запись... Говорите';
+            document.getElementById('transcription').innerHTML = '';
+        }
+        
+        function stopRecording() {
+            recognition.stop();
+            isRecording = false;
+            document.getElementById('micButton').classList.remove('recording');
+            document.getElementById('statusText').textContent = 'Нажмите на микрофон и говорите';
+        }
+        
+        function updateQuestion() {
+            document.getElementById('questionNumber').textContent = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
+            document.getElementById('questionText').textContent = questions[currentQuestion];
+            document.getElementById('progressFill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            
+            if (answers[currentQuestion]) {
+                document.getElementById('transcription').innerHTML = answers[currentQuestion];
+            } else {
+                document.getElementById('transcription').innerHTML = 'Ваш ответ появится здесь...';
+            }
+            
+            // Обновляем индикаторы вопросов
+            document.querySelectorAll('.question-item').forEach((item, index) => {
+                if (answers[index]) {
+                    item.classList.add('completed');
+                    item.querySelector('i').className = 'fas fa-check-circle';
+                } else {
+                    item.classList.remove('completed');
+                    item.querySelector('i').className = 'fas fa-circle';
+                }
+            });
+        }
+        
+        function markQuestionCompleted(index) {
+            const item = document.querySelector(`.question-item[data-question="${index + 1}"]`);
+            if (item) {
+                item.classList.add('completed');
+                item.querySelector('i').className = 'fas fa-check-circle';
+            }
+        }
+        
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            if (currentQuestion < questions.length - 1) {
+                if (isRecording) stopRecording();
+                currentQuestion++;
+                updateQuestion();
+            } else {
+                // Завершение опроса
+                saveAndRedirect();
+            }
+        });
+        
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            if (currentQuestion > 0) {
+                if (isRecording) stopRecording();
+                currentQuestion--;
+                updateQuestion();
+            }
+        });
+        
+        function saveAndRedirect() {
+            // Сохраняем ответы в localStorage
+            localStorage.setItem('patientAnswers', JSON.stringify(answers));
+            
+            // TODO: Отправка на сервер
+            /*
+            fetch('http://localhost:5000/api/patient/voice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ answers })
+            });
+            */
+            
+            alert('Спасибо! Ваши ответы сохранены');
+            window.location.href = 'explanation.html';
+        }
+        
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

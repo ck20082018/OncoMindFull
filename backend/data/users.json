@@ -1,0 +1,72 @@
+[
+  {
+    "id": "eb5e8c53ccf998da5fde7d1c8ccc7a3a",
+    "email": "doctor@oncomind.ai",
+    "password_hash": "86f91ab7aec9edcf8ce933ad8d519288$dfd7870ee1c01c603cbfc9754fd83aaefd7568436cfcddebf914813b7d7a31a2",
+    "full_name": "Александр Петрович Смирнов",
+    "role": "doctor",
+    "created_at": "2026-02-23T17:00:48.282445",
+    "diploma_number": "12345678",
+    "specialization": "Онколог, химиотерапевт",
+    "clinic": "Городской онкологический диспансер №1",
+    "birth_date": null,
+    "phone": null,
+    "files": []
+  },
+  {
+    "id": "428c6724b7ff4913e3bd6bcf7297e4b1",
+    "email": "elena.doctor@oncomind.ai",
+    "password_hash": "45ffdd40cc6eb47d622f077bb1399081$db8299f06b7bc3e776b37616dd0fb7374fba532934a4bd0b45c0b2c3eac90cd8",
+    "full_name": "Елена Владимировна Козлова",
+    "role": "doctor",
+    "created_at": "2026-02-23T17:00:48.313815",
+    "diploma_number": "87654321",
+    "specialization": "Онколог, радиотерапевт",
+    "clinic": "Областная клиническая больница",
+    "birth_date": null,
+    "phone": null,
+    "files": []
+  },
+  {
+    "id": "bed6be806d0ecf906616351c749fb921",
+    "email": "maria.patient@example.com",
+    "password_hash": "e73f196e883294ab41a2c2a4f98aebe4$51b1331c03781e52eebc1a5a50d3c7ed81356dbee9bc8dcbb68ead3650c937ae",
+    "full_name": "Мария Ивановна Петрова",
+    "role": "patient",
+    "created_at": "2026-02-23T17:00:48.346335",
+    "diploma_number": null,
+    "specialization": null,
+    "clinic": null,
+    "birth_date": "15.03.1965",
+    "phone": "+7 (999) 123-45-67",
+    "files": []
+  },
+  {
+    "id": "d3daafda00bca4a17855a6d32405c8d7",
+    "email": "ivan.patient@example.com",
+    "password_hash": "1197eace1d3ab9764573a2d1465447c0$bc9b4d538720ac3684fd72eea59dec7af248a768dae3d8c700fdd3277e58d760",
+    "full_name": "Иван Сергеевич Соколов",
+    "role": "patient",
+    "created_at": "2026-02-23T17:00:48.377538",
+    "diploma_number": null,
+    "specialization": null,
+    "clinic": null,
+    "birth_date": "22.08.1958",
+    "phone": "+7 (999) 765-43-21",
+    "files": []
+  },
+  {
+    "id": "eb56707605fc4fba037c1889191fb3dc",
+    "email": "anna.test@example.com",
+    "password_hash": "c108813b33cc02ec4fddba13766d6489$9c3d76d34240f66529a6325ea3c5d3a05facd042372ef2ca4a7ccae0d8982195",
+    "full_name": "Анна Дмитриевна Новикова",
+    "role": "patient",
+    "created_at": "2026-02-23T17:00:48.411290",
+    "diploma_number": null,
+    "specialization": null,
+    "clinic": null,
+    "birth_date": "03.12.1978",
+    "phone": "+7 (999) 456-78-90",
+    "files": []
+  }
+]

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Анализ лечения</title>
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .analyze-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .mode-btn.active {
+            border-color: var(--primary-blue);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .mode-btn i {
+            font-size: 24px;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .mode-btn span {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .mode-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+        
+        .upload-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary-blue);
+            background: rgba(37, 99, 235, 0.05);
+        }
+        
+        .upload-area i {
+            font-size: 60px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        
+        .upload-area p {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        
+        .upload-area small {
+            color: var(--text-muted);
+        }
+        
+        .file-list {
+            margin-top: 20px;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 16px;
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 10px;
+        }
+        
+        .file-item i {
+            color: var(--primary-blue);
+            font-size: 20px;
+        }
+        
+        .file-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .file-remove {
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+        
+        .file-remove:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        
+        .analyze-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .results-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            display: none;
+        }
+        
+        .results-section.visible {
+            display: block;
+        }
+        
+        .error-highlight {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 30px;
+        }
+        
+        .error-highlight h3 {
+            color: #ef4444;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .error-item {
+            padding: 12px;
+            background: white;
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .alternative-card {
+            background: var(--bg-light);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .alternative-card h4 {
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .reference-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: white;
+            border-radius: var(--radius-full);
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .reference-link:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .suggestions-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .suggestions-list li {
+            padding: 12px 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .suggestions-list li i {
+            color: var(--primary-blue);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .loading-spinner {
+            text-align: center;
+        }
+        
+        .loading-spinner i {
+            font-size: 60px;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+        
+        .loading-spinner p {
+            font-size: 18px;
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="dashboard.html" class="nav-link">Кабинет</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <section>
+        <div class="container analyze-container">
+            <h1 style="text-align: center; margin-bottom: 20px;">Анализ лечения</h1>
+            
+            <!-- Выбор режима -->
+            <div class="mode-selector" id="modeSelector">
+                <div class="mode-btn active" data-mode="interaction" onclick="setMode('interaction')">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Проверка совместимости</span>
+                    <div class="mode-desc">Анализ взаимодействия препаратов</div>
+                </div>
+                <div class="mode-btn" data-mode="analogs" onclick="setMode('analogs')">
+                    <i class="fas fa-pills"></i>
+                    <span>Поиск аналогов</span>
+                    <div class="mode-desc">Поиск по активному веществу</div>
+                </div>
+                <div class="mode-btn" data-mode="treatment" onclick="setMode('treatment')">
+                    <i class="fas fa-stethoscope"></i>
+                    <span>Проверка тактики лечения</span>
+                    <div class="mode-desc">Сравнение с рекомендациями</div>
+                </div>
+            </div>
+            
+            <!-- Форма загрузки -->
+            <div class="upload-section">
+                <div id="dropzone" class="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Перетащите файлы сюда или кликните для выбора</p>
+                    <small>Поддерживаемые форматы: .pdf, .xlsx, .txt, .jpg, .png</small>
+                    <input type="file" id="fileInput" name="files" multiple accept=".pdf,.xlsx,.txt,.jpg,.jpeg,.png" style="display: none;">
+                </div>
+                
+                <div class="file-list" id="fileList"></div>
+                
+                <div id="activeSubstanceField" style="display: none; margin-top: 20px;">
+                    <label for="activeSubstance" style="font-weight: 600; display: block; margin-bottom: 10px;">Введите активное вещество:</label>
+                    <input type="text" id="activeSubstance" placeholder="Например: паклитаксел" style="width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: var(--radius-sm); font-size: 15px;">
+                </div>
+                
+                <button class="btn btn-primary analyze-btn" onclick="startAnalysis()">
+                    <i class="fas fa-play"></i> Запустить анализ
+                </button>
+            </div>
+            
+            <!-- Результаты анализа -->
+            <div class="results-section" id="resultsSection">
+                <div id="interactionResults" style="display: none;">
+                    <h2 style="margin-bottom: 20px;">Результаты проверки совместимости</h2>
+                    <div class="error-highlight">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Обнаружены конфликты:</h3>
+                        <div class="error-item">
+                            <strong>Доксорубицин + Трастузумаб</strong> - повышенный риск кардиотоксичности
+                        </div>
+                        <div class="error-item">
+                            <strong>Цисплатин + Гентамицин</strong> - усиление нефротоксичности
+                        </div>
+                    </div>
+                    <h3>Безопасные комбинации:</h3>
+                    <div class="alternative-card">
+                        <p>Доксорубицин + Декстразоксан (кардиопротектор)</p>
+                    </div>
+                </div>
+                
+                <div id="analogsResults" style="display: none;">
+                    <h2 style="margin-bottom: 20px;">Аналоги паклитаксела</h2>
+                    <div class="alternative-card">
+                        <h4>Паклитаксел-Тева</h4>
+                        <p><strong>Производитель:</strong> Тева, Израиль</p>
+                        <p><strong>Цена:</strong> ≈ 5 400 руб/флакон</p>
+                        <a href="#" class="reference-link">Инструкция</a>
+                        <a href="#" class="reference-link">Зарегистрирован в РФ</a>
+                    </div>
+                    <div class="alternative-card">
+                        <h4>Таксол</h4>
+                        <p><strong>Производитель:</strong> BMS, США</p>
+                        <p><strong>Цена:</strong> ≈ 8 200 руб/флакон</p>
+                        <a href="#" class="reference-link">Инструкция</a>
+                        <a href="#" class="reference-link">Зарегистрирован в РФ</a>
+                    </div>
+                    <div class="alternative-card">
+                        <h4>Паклитаксел-Лэнс</h4>
+                        <p><strong>Производитель:</strong> Лэнс-Фарм, Россия</p>
+                        <p><strong>Цена:</strong> ≈ 3 800 руб/флакон</p>
+                        <a href="#" class="reference-link">Инструкция</a>
+                        <a href="#" class="reference-link">Зарегистрирован в РФ</a>
+                    </div>
+                </div>
+                
+                <div id="treatmentResults" style="display: none;">
+                    <h2 style="margin-bottom: 20px;">Анализ тактики лечения</h2>
+                    <div class="error-highlight">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Ошибки в назначениях:</h3>
+                        <div class="error-item">
+                            <strong>Дозировка паклитаксела</strong> - 80 мг/м² вместо рекомендованных 175 мг/м²
+                        </div>
+                        <div class="error-item">
+                            <strong>Отсутствует кардиопротекция</strong> - при применении антрациклинов
+                        </div>
+                    </div>
+                    
+                    <h3>Альтернативные тактики:</h3>
+                    <div class="alternative-card">
+                        <h4>Схема AC-T (рекомендована Минздравом РФ)</h4>
+                        <p>Доксорубицин 60 мг/м² + Циклофосфамид 600 мг/м² каждые 2-3 недели × 4 цикла, затем Паклитаксел 80 мг/м² еженедельно × 12 недель</p>
+                        <div>
+                            <a href="#" class="reference-link">Минздрав РФ, п.4.2.1</a>
+                            <a href="#" class="reference-link">NCCN, Breast Cancer, v.3.2025</a>
+                        </div>
+                    </div>
+                    
+                    <div class="alternative-card">
+                        <h4>Схема TC (при противопоказаниях к антрациклинам)</h4>
+                        <p>Доцетаксел 75 мг/м² + Циклофосфамид 600 мг/м² каждые 3 недели × 4-6 циклов</p>
+                        <div>
+                            <a href="#" class="reference-link">Минздрав РФ, п.4.2.3</a>
+                            <a href="#" class="reference-link">ESMO, Early Breast Cancer, 2025</a>
+                        </div>
+                    </div>
+                    
+                    <h3>Рекомендовано дообследование:</h3>
+                    <ul class="suggestions-list">
+                        <li><i class="fas fa-heart"></i> Эхокардиография (оценка фракции выброса ЛЖ)</li>
+                        <li><i class="fas fa-dna"></i> Тестирование на мутации BRCA1/2</li>
+                        <li><i class="fas fa-flask"></i> Определение уровня HER2 методом FISH</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ОВЕРЛЕЙ ЗАГРУЗКИ -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Анализ данных...</p>
+        </div>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2025 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Получаем параметр mode из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialMode = urlParams.get('mode') || 'treatment';
+        
+        let currentMode = initialMode;
+        let uploadedFiles = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'doctor') {
+                window.location.href = '../login.html';
+                return;
+            }
+            
+            setMode(initialMode);
+            initDragDrop();
+        });
+        
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                if (btn.dataset.mode === mode) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Показываем/скрываем поле для активного вещества
+            const substanceField = document.getElementById('activeSubstanceField');
+            if (mode === 'analogs') {
+                substanceField.style.display = 'block';
+            } else {
+                substanceField.style.display = 'none';
+            }
+        }
+        
+        function initDragDrop() {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+            
+            dropzone.addEventListener('click', () => fileInput.click());
+            
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+            
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('dragover');
+            });
+            
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+        }
+        
+        function handleFiles(files) {
+            for (let file of files) {
+                uploadedFiles.push(file);
+            }
+            updateFileList();
+        }
+        
+        function updateFileList() {
+            const list = document.getElementById('fileList');
+            let html = '';
+            
+            uploadedFiles.forEach((file, index) => {
+                const size = (file.size / 1024).toFixed(1);
+                html += `
+                    <div class="file-item">
+                        <i class="fas fa-file-${getFileIcon(file.name)}"></i>
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">${size} KB</span>
+                        <span class="file-remove" onclick="removeFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+        }
+        
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (ext === 'pdf') return 'pdf';
+            if (ext === 'xlsx') return 'excel';
+            if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') return 'image';
+            return 'alt';
+        }
+        
+        window.removeFile = function(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileList();
+        };
+        
+        async function startAnalysis() {
+            if (currentMode === 'analogs') {
+                const substance = document.getElementById('activeSubstance').value;
+                if (!substance) {
+                    alert('Введите активное вещество');
+                    return;
+                }
+            } else if (uploadedFiles.length === 0) {
+                alert('Загрузите файлы для анализа');
+                return;
+            }
+            
+            // Показываем загрузку
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // Имитация загрузки (тут будет реальный API запрос)
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                
+                // Показываем соответствующие результаты
+                document.querySelectorAll('#interactionResults, #analogsResults, #treatmentResults').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                document.getElementById(`${currentMode}Results`).style.display = 'block';
+                document.getElementById('resultsSection').classList.add('visible');
+            }, 2000);
+            
+            // TODO: Здесь будет реальный API запрос
+            /*
+            const formData = new FormData();
+            uploadedFiles.forEach(file => formData.append('files', file));
+            formData.append('mode', currentMode);
+            
+            if (currentMode === 'analogs') {
+                formData.append('activeSubstance', document.getElementById('activeSubstance').value);
+            }
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/doctor/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                alert('Ошибка при анализе');
+            }
+            */
+        }
+        
+        // Выход
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

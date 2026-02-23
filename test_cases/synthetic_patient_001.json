@@ -1,0 +1,190 @@
+{
+  "patient_id": "SYNTHETIC_001",
+  "is_synthetic": true,
+  "generated_at": "2026-02-20",
+  "description": "Синтетический тестовый случай для проверки системы. Все данные вымышлены.",
+  
+  "patient_demographics": {
+    "age": 52,
+    "gender": "Ж",
+    "height_cm": 165,
+    "weight_kg": 68,
+    "bmi": 25.0,
+    "ecog_status": 1
+  },
+  
+  "diagnosis": {
+    "primary": "Рак молочной железы",
+    "icd_10": "C50.4",
+    "tnm": {
+      "t": "T2",
+      "n": "N1",
+      "m": "M0",
+      "stage_group": "IIB",
+      "classification": "клиническая"
+    },
+    "histology": {
+      "type": "Инвазивная дольковая карцинома",
+      "grade": "G2",
+      "ki67_percent": 25,
+      "lymphovascular_invasion": false
+    },
+    "molecular_subtype": {
+      "er_status": "positive",
+      "er_percent": 80,
+      "pr_status": "positive",
+      "pr_percent": 60,
+      "her2_status": "negative",
+      "her2_ihc": "1+",
+      "her2_fish": "not_amplified",
+      "intrinsic_subtype": "Luminal B (HER2-negative)"
+    }
+  },
+  
+  "comorbidities": [
+    {
+      "condition": "Артериальная гипертензия",
+      "stage": "II",
+      "risk": "умеренный",
+      "medications": ["Лизиноприл 10 мг ежедневно"]
+    },
+    {
+      "condition": "Гипотиреоз",
+      "medications": ["Левотироксин 50 мкг ежедневно"]
+    }
+  ],
+  
+  "treatment_history": [
+    {
+      "date": "2026-01-15",
+      "type": "surgery",
+      "procedure": "Секторальная резекция молочной железы",
+      "findings": "Опухоль 2.5 см в верхненаружном квадранте",
+      "margins": "чистые"
+    },
+    {
+      "date": "2026-01-20",
+      "type": "pathology",
+      "report": "Инвазивная дольковая карцинома, G2. В 1 лимфоузле микрометастаз 2 мм."
+    }
+  ],
+  
+  "current_treatment_plan": {
+    "intent": "адъювантный",
+    "chemotherapy": {
+      "regimen": "AC-T",
+      "cycles_planned": 8,
+      "drugs": [
+        {
+          "name": "Доксорубицин",
+          "dose_mg_m2": 60,
+          "route": "IV",
+          "day": 1,
+          "cycle_days": [1, 15]
+        },
+        {
+          "name": "Циклофосфамид",
+          "dose_mg_m2": 600,
+          "route": "IV",
+          "day": 1,
+          "cycle_days": [1, 15]
+        },
+        {
+          "name": "Паклитаксел",
+          "dose_mg_m2": 80,
+          "route": "IV",
+          "day": "1, 8, 15",
+          "cycle_days": [22, 29, 36, 43, 50, 57, 64, 71]
+        }
+      ]
+    },
+    "endocrine_therapy": {
+      "planned": true,
+      "drug": "Летрозол",
+      "dose_mg": 2.5,
+      "duration_years": 5,
+      "start_after": "окончание химиотерапии"
+    },
+    "radiation_therapy": {
+      "planned": true,
+      "target": "молочная железа",
+      "dose_gy": 50,
+      "fractions": 25,
+      "start_after": "окончание химиотерапии"
+    }
+  },
+  
+  "lab_results": [
+    {
+      "date": "2026-02-01",
+      "test": "Общий анализ крови",
+      "results": {
+        "hemoglobin_g_l": 128,
+        "leukocytes_10_9_l": 6.2,
+        "neutrophils_10_9_l": 3.8,
+        "platelets_10_9_l": 245,
+        "normal_range_note": "Все показатели в норме"
+      }
+    },
+    {
+      "date": "2026-02-01",
+      "test": "Биохимия",
+      "results": {
+        "alt_u_l": 22,
+        "ast_u_l": 25,
+        "bilirubin_total_umol_l": 12,
+        "creatinine_umol_l": 75,
+        "ejection_fraction_percent": 62
+      }
+    },
+    {
+      "date": "2026-02-01",
+      "test": "Онкомаркеры",
+      "results": {
+        "ca15_3_u_ml": 18,
+        "cea_ng_ml": 2.1,
+        "normal_range_note": "В пределах нормы"
+      }
+    }
+  ],
+  
+  "imaging_results": [
+    {
+      "date": "2026-01-10",
+      "modality": "МРТ молочных желёз",
+      "findings": "Образование 2.5 см в верхненаружном квадранте левой молочной железы. Подозрительные лимфоузлы не выявлены."
+    },
+    {
+      "date": "2026-01-12",
+      "modality": "КТ органов грудной клетки и брюшной полости",
+      "findings": "Отдалённых метастазов не выявлено."
+    },
+    {
+      "date": "2026-01-13",
+      "modality": "Остеосцинтиграфия",
+      "findings": "Метастатического поражения костей не выявлено."
+    }
+  ],
+  
+  "expected_guideline_references": [
+    {
+      "source": "Минздрав РФ",
+      "document": "Рак молочной железы. Клинические рекомендации, 2023",
+      "relevant_sections": [
+        "Адъювантная лекарственная терапия",
+        "Режим AC-T",
+        "Эндокринная терапия ER+ рака"
+      ]
+    }
+  ],
+  
+  "expected_verdict": "соответствует",
+  "expected_confidence": 0.85,
+  
+  "notes": [
+    "Это синтетический случай для тестирования системы",
+    "Все данные вымышлены и не относятся к реальным пациентам",
+    "Лечение соответствует актуальным клиническим рекомендациям",
+    "Пациентка - Luminal B HER2-негативный подтип, показана адъювантная ХТ + эндокринная терапия"
+  ]
+}
