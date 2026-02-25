@@ -307,23 +307,33 @@ def register():
     """Регистрация нового пользователя"""
     try:
         # Логирование входящих данных
-        logger.info(f"Получен запрос на регистрацию")
+        logger.info("="*60)
+        logger.info("ПОЛУЧЕН ЗАПРОС НА РЕГИСТРАЦИЮ")
         logger.info(f"Form data: {dict(request.form)}")
-        logger.info(f"Files: {request.files}")
-        
+        logger.info(f"Files: {list(request.files.keys()) if request.files else 'Нет'}")
+
         # Получение данных формы
         role = request.form.get('role', 'patient')
         email = request.form.get('email')
         password = request.form.get('password')
         full_name = request.form.get('full_name')
-        
+
         logger.info(f"role={role}, email={email}, full_name={full_name}")
 
         # Валидация обязательных полей
-        if not all([email, password, full_name, role]):
-            logger.warning(f"Не все поля заполнены: email={email}, full_name={full_name}")
-            return jsonify({'error': 'Заполните все обязательные поля'}), 400
-        
+        if not email:
+            logger.error("Не указан email")
+            return jsonify({'error': 'Не указан email'}), 400
+        if not password:
+            logger.error("Не указан пароль")
+            return jsonify({'error': 'Не указан пароль'}), 400
+        if not full_name:
+            logger.error("Не указано ФИО")
+            return jsonify({'error': 'Не указано ФИО'}), 400
+        if not role:
+            logger.error("Не указана роль")
+            return jsonify({'error': 'Не указана роль'}), 400
+
         # Подготовка данных
         user_data = {
             'email': email,
@@ -331,7 +341,7 @@ def register():
             'full_name': full_name,
             'role': role
         }
-        
+
         # Поля для врача
         if role == 'doctor':
             diploma_number = request.form.get('diploma_number', '')
@@ -344,22 +354,29 @@ def register():
         # Поля для пациента
         else:
             user_data.update({
-                'birth_date': request.form.get('birth_date'),
-                'phone': request.form.get('phone')
+                'birth_date': request.form.get('birth_date', ''),
+                'phone': request.form.get('phone', '')
             })
-        
+
+        logger.info(f"Создание пользователя: {user_data}")
+
         # Создание пользователя
         user, error = user_manager.create_user(user_data)
         if error:
+            logger.error(f"Ошибка создания пользователя: {error}")
             return jsonify({'error': error}), 400
-        
+
+        logger.info(f"Пользователь создан: {user.id}, {user.email}")
+
         # Сохранение файлов
         if 'files' in request.files:
             files = request.files.getlist('files')
             saved_files = save_uploaded_files(files)
             user.files = saved_files
             user_manager._save_users()
-        
+            logger.info(f"Файлы сохранены: {saved_files}")
+
+        logger.info("="*60)
         return jsonify({
             'message': 'Регистрация успешна',
             'user': {
@@ -369,10 +386,10 @@ def register():
                 'role': user.role
             }
         }), 201
-        
+
     except Exception as e:
-        app.logger.error(f"Ошибка регистрации: {e}")
-        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+        app.logger.error(f"Критическая ошибка регистрации: {e}", exc_info=True)
+        return jsonify({'error': f'Внутренняя ошибка сервера: {str(e)}'}), 500
 
 
 @app.route('/api/login', methods=['POST'])
