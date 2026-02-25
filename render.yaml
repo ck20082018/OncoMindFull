@@ -1,0 +1,3 @@
+python_version: 3.11
+build_command: cd backend && pip install -r requirements.txt
+start_command: cd backend && python app.py
