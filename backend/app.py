@@ -300,14 +300,22 @@ def save_uploaded_files(files) -> List[str]:
 def register():
     """Регистрация нового пользователя"""
     try:
+        # Логирование входящих данных
+        logger.info(f"Получен запрос на регистрацию")
+        logger.info(f"Form data: {dict(request.form)}")
+        logger.info(f"Files: {request.files}")
+        
         # Получение данных формы
         role = request.form.get('role', 'patient')
         email = request.form.get('email')
         password = request.form.get('password')
         full_name = request.form.get('full_name')
         
+        logger.info(f"role={role}, email={email}, full_name={full_name}")
+
         # Валидация обязательных полей
         if not all([email, password, full_name, role]):
+            logger.warning(f"Не все поля заполнены: email={email}, full_name={full_name}")
             return jsonify({'error': 'Заполните все обязательные поля'}), 400
         
         # Подготовка данных

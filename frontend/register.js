@@ -148,16 +148,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Подготовка данных
         const formData = new FormData();
         formData.append('role', role);
-        formData.append('fullName', document.getElementById('fullName').value);
+        formData.append('full_name', document.getElementById('fullName').value);
         formData.append('email', document.getElementById('email').value);
         formData.append('password', password);
-        
+
         if (role === 'doctor') {
-            formData.append('diplomaNumber', diplomaNumber);
+            formData.append('diploma_number', diplomaNumber);
             formData.append('specialization', document.getElementById('specialization').value);
             formData.append('clinic', document.getElementById('clinic').value);
         } else {
-            formData.append('birthDate', document.getElementById('birthDate').value);
+            formData.append('birth_date', document.getElementById('birthDate').value);
             formData.append('phone', document.getElementById('phone').value);
         }
 
