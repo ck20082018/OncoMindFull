@@ -125,20 +125,22 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         formMessage.textContent = '';
-        
+
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
-        
+
         if (password !== confirmPassword) {
             showMessage('Пароли не совпадают', 'error');
             return;
         }
 
         const role = roleInput.value;
-        
+        let diplomaNumber = '';
+
         // Валидация диплома для врача
         if (role === 'doctor') {
-            const diplomaNumber = diplomaInput.value;
+            diplomaNumber = diplomaInput.value;
+            console.log('Diploma number:', diplomaNumber, 'Length:', diplomaNumber.length);
             if (!/^\d{8}$/.test(diplomaNumber)) {
                 showMessage('Номер диплома должен содержать ровно 8 цифр', 'error');
                 return;

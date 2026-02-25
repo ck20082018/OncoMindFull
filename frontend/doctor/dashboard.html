@@ -415,7 +415,7 @@
         // Загрузка уведомлений с сервера
         async function loadNotifications() {
             try {
-                const response = await fetch('http://localhost:5000/api/doctor/guidelines/new');
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/doctor/guidelines/new`);
                 if (response.ok) {
                     const data = await response.json();
                     updateNotificationsList(data.notifications);
@@ -464,5 +464,7 @@
             window.location.href = '../index.html';
         });
     </script>
+    <script src="../config.js"></script>
+    <script src="../script.js"></script>
 </body>
 </html>

@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Перенаправление в зависимости от роли
                     setTimeout(() => {
                         if (data.user.role === 'doctor') {
-                            window.location.href = 'doctor-dashboard.html'; // Создадим позже
+                            window.location.href = 'doctor/dashboard.html';
                         } else {
-                            window.location.href = 'patient-dashboard.html'; // Создадим позже
+                            window.location.href = 'patient/dashboard.html';
                         }
                     }, 1500);
                     
