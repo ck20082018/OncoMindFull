@@ -9,6 +9,46 @@
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Шапка кабинета врача */
+        .doctor-header {
+            background: white;
+            padding: 25px 0;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #f1f5f9;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .doctor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 30px;
+            box-shadow: var(--glow-blue);
+        }
+
+        .doctor-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .doctor-specialization {
+            color: var(--primary-blue);
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
         .guidelines-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -409,15 +449,15 @@
     </header>
 
     <!-- ШАПКА КАБИНЕТА -->
-    <div class="doctor-header" style="background: white; padding: 20px 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <div class="doctor-header">
         <div class="container">
-            <div class="doctor-info" style="display: flex; align-items: center; gap: 20px;">
-                <div class="doctor-avatar" style="width: 60px; height: 60px; border-radius: 50%; background: var(--gradient-main); display: flex; align-items: center; justify-content: center; color: white; font-size: 30px;">
+            <div class="doctor-info">
+                <div class="doctor-avatar">
                     <i class="fas fa-user-md"></i>
                 </div>
                 <div>
-                    <div class="doctor-name" id="doctorName" style="font-size: 24px; font-weight: 700; color: var(--text-dark);">Загрузка...</div>
-                    <div class="doctor-specialization" id="doctorSpecialization" style="color: var(--primary-blue);"></div>
+                    <div class="doctor-name" id="doctorName">Загрузка...</div>
+                    <div class="doctor-specialization" id="doctorSpecialization"></div>
                 </div>
             </div>
         </div>
@@ -784,5 +824,6 @@
             window.location.href = '../index.html';
         });
     </script>
+    <script src="../auth-check.js"></script>
 </body>
 </html>
