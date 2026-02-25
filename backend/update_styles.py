@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рак мочевого пузыря — Клинические рекомендации 2026</title>
-    <style>
+#!/usr/bin/env python3
+"""
+Скрипт для обновления стилей во всех HTML файлах рекомендаций
+"""
+
+import re
+from pathlib import Path
+
+# Новые стили
+new_styles = """<style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
@@ -135,20 +138,23 @@
             background: rgba(37, 99, 235, 0.2);
             transform: translateX(-5px);
         }
-    </style>
-</head>
-<body>
-    <a href="../../doctor/dashboard.html" class="back-link">← Вернуться в кабинет врача</a>
-    <h1>Рак мочевого пузыря. Клинические рекомендации</h1>
-    <div class="meta">
-        <p><strong>Код МКБ-10:</strong> C67</p>
-        <p><strong>Год утверждения:</strong> 2026</p>
-        <p><strong>Разработчик:</strong> Минздрав РФ</p>
-    </div>
-    <h2>1. Диагностика</h2>
-    <p>Цистоскопия с биопсией, УЗИ мочевого пузыря, КТ/МРТ малого таза, цитология мочи.</p>
-    <h2>2. Лечение</h2>
-    <p>При поверхностном раке — ТУР мочевого пузыря + внутрипузырная терапия. При инвазивном — радикальная цистэктомия + химиотерапия. При метастатическом — системная химиотерапия + иммунотерапия.</p>
-    <a href="../../doctor/dashboard.html" class="back-link">← Вернуться в кабинет врача</a>
-</body>
-</html>
+    </style>"""
+
+# Путь к папке с рекомендациями
+kb_path = Path(__file__).parent / 'knowledge_base'
+
+# Обрабатываем все HTML файлы
+for html_file in kb_path.glob('*.html'):
+    with open(html_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # Заменяем стили между <style> и </style>
+    pattern = r'<style>.*?</style>'
+    new_content = re.sub(pattern, new_styles, content, flags=re.DOTALL)
+    
+    with open(html_file, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+    
+    print(f"✅ Обновлён: {html_file.name}")
+
+print("\n🎉 Все файлы обновлены!")
