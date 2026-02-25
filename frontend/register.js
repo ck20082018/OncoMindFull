@@ -1,4 +1,7 @@
 // Регистрация и drag-and-drop функциональность
+// Используем API_CONFIG из config.js
+const API_URL = API_CONFIG.BASE_URL;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Переключатель ролей
     const roleBtns = document.querySelectorAll('.role-btn');
@@ -10,12 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
     roleBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const role = this.dataset.role;
-            
+
             roleBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
-            
+
             roleInput.value = role;
-            
+
             if (role === 'doctor') {
                 doctorFields.style.display = 'block';
                 patientFields.style.display = 'none';
@@ -164,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         try {
-            const response = await fetch('/api/register', {
+            const response = await fetch(`${API_URL}/api/register`, {
                 method: 'POST',
                 body: formData
             });

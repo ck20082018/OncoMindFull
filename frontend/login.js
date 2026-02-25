@@ -1,37 +1,39 @@
 // login.js - Логика страницы входа
+// Используем API_CONFIG из config.js
+const API_URL = API_CONFIG.BASE_URL;
 
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
     const formMessage = document.getElementById('formMessage');
-    
+
     // Проверка авторизации при загрузке
     checkAuthStatus();
-    
+
     // Обработка отправки формы
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             // Получаем данные формы
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const remember = document.querySelector('input[name="remember"]')?.checked || false;
-            
+
             // Валидация
             if (!email || !password) {
                 showMessage('error', 'Заполните все поля');
                 return;
             }
-            
+
             // Показываем загрузку
             const submitBtn = loginForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
             submitBtn.disabled = true;
             submitBtn.textContent = 'Вход...';
-            
+
             try {
                 // Отправка запроса на бэкенд
-                const response = await fetch('http://localhost:5000/api/login', {
+                const response = await fetch(`${API_URL}/api/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
