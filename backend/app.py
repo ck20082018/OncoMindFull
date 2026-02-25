@@ -219,6 +219,9 @@ class UserManager:
     
     def validate_diploma_format(self, diploma_number: str) -> bool:
         """Проверка формата диплома (8 цифр)"""
+        if not diploma_number:
+            return False
+        diploma_number = str(diploma_number).strip()
         return diploma_number.isdigit() and len(diploma_number) == 8
     
     def is_diploma_registered(self, diploma_number: str) -> bool:
@@ -227,13 +230,16 @@ class UserManager:
     
     def create_user(self, user_data: dict) -> tuple[Optional[User], Optional[str]]:
         """Создание нового пользователя"""
+        logger.info(f"create_user: email={user_data.get('email')}, role={user_data.get('role')}, diploma={user_data.get('diploma_number')}")
+        
         # Проверка email
         if any(u.email == user_data['email'] for u in self.users.values()):
             return None, 'Email уже зарегистрирован'
-        
+
         # Проверка диплома для врачей
         if user_data['role'] == 'doctor':
             diploma = user_data.get('diploma_number', '')
+            logger.info(f"Проверка диплома: '{diploma}', isdigit={diploma.isdigit() if diploma else 'N/A'}, len={len(diploma) if diploma else 0}")
             if not self.validate_diploma_format(diploma):
                 return None, 'Номер диплома должен содержать ровно 8 цифр'
             if self.is_diploma_registered(diploma):
@@ -328,10 +334,12 @@ def register():
         
         # Поля для врача
         if role == 'doctor':
+            diploma_number = request.form.get('diploma_number', '')
+            logger.info(f"Doctor registration: diploma_number='{diploma_number}', len={len(diploma_number) if diploma_number else 0}")
             user_data.update({
-                'diploma_number': request.form.get('diploma_number'),
-                'specialization': request.form.get('specialization'),
-                'clinic': request.form.get('clinic')
+                'diploma_number': diploma_number.strip() if diploma_number else '',
+                'specialization': request.form.get('specialization', ''),
+                'clinic': request.form.get('clinic', '')
             })
         # Поля для пациента
         else:

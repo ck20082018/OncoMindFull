@@ -10,6 +10,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const patientFields = document.getElementById('patientFields');
     const diplomaInput = document.getElementById('diplomaNumber');
 
+    // Инициализация полей при загрузке
+    if (roleInput.value === 'doctor') {
+        doctorFields.style.display = 'block';
+        patientFields.style.display = 'none';
+        diplomaInput.required = true;
+    } else {
+        doctorFields.style.display = 'none';
+        patientFields.style.display = 'block';
+        diplomaInput.required = false;
+    }
+
     roleBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             const role = this.dataset.role;
@@ -168,6 +179,12 @@ document.addEventListener('DOMContentLoaded', function() {
             formData.append('files', file);
         });
 
+        // ОТЛАДКА: выводим все данные
+        console.log('=== Отправка формы ===');
+        for (let [key, value] of formData.entries()) {
+            console.log(key, ':', value);
+        }
+
         try {
             const response = await fetch(`${API_URL}/api/register`, {
                 method: 'POST',
@@ -175,12 +192,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             const result = await response.json();
-            
+
             if (response.ok) {
-                showMessage('Регистрация успешна! Ожидайте подтверждения.', 'success');
+                // Перенаправляем на страницу входа
+                showMessage('Регистрация успешна! Перенаправление на страницу входа...', 'success');
                 form.reset();
                 uploadedFiles = [];
                 fileList.innerHTML = '';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
             } else {
                 showMessage(result.error || 'Ошибка регистрации', 'error');
             }
