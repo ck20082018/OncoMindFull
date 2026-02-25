@@ -468,8 +468,17 @@ if __name__ == '__main__':
     print("OncoMind Backend Server")
     print("=" * 50)
     print(f"Тестовый врач:")
-    print(f"  Email: test.doctor@oncomind.ai")
-    print(f"  Пароль: TestDoctor123!")
+    print(f"  Email: doctor@oncomind.ai")
+    print(f"  Пароль: Doctor123!")
     print(f"  Диплом: 12345678")
     print("=" * 50)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    
+    # Проверка режима работы
+    import os
+    debug_mode = os.environ.get('FLASK_ENV', 'production') != 'production'
+    
+    app.run(
+        debug=debug_mode,
+        host='0.0.0.0',
+        port=5000
+    )
