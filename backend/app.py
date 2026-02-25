@@ -480,6 +480,69 @@ def get_users():
     return jsonify({'users': users_list}), 200
 
 
+@app.route('/api/guidelines', methods=['GET'])
+def get_guidelines():
+    """Получение списка клинических рекомендаций"""
+    try:
+        import json
+        guidelines_file = Path(__file__).parent / 'knowledge_base' / 'index.json'
+        
+        if not guidelines_file.exists():
+            return jsonify({'error': 'База рекомендаций не найдена'}), 404
+        
+        with open(guidelines_file, 'r', encoding='utf-8') as f:
+            guidelines = json.load(f)
+        
+        # Поиск по названию
+        search_query = request.args.get('q', '').lower()
+        if search_query:
+            guidelines = [g for g in guidelines if search_query in g['title'].lower() or 
+                         any(search_query in tag.lower() for tag in g.get('tags', []))]
+        
+        return jsonify({'guidelines': guidelines}), 200
+    
+    except Exception as e:
+        logger.error(f"Ошибка получения рекомендаций: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@app.route('/api/guidelines/<guideline_id>', methods=['GET'])
+def get_guideline(guideline_id):
+    """Получение конкретной рекомендации"""
+    try:
+        import json
+        guidelines_file = Path(__file__).parent / 'knowledge_base' / 'index.json'
+        
+        if not guidelines_file.exists():
+            return jsonify({'error': 'База рекомендаций не найдена'}), 404
+        
+        with open(guidelines_file, 'r', encoding='utf-8') as f:
+            guidelines = json.load(f)
+        
+        guideline = next((g for g in guidelines if g['id'] == guideline_id), None)
+        
+        if not guideline:
+            return jsonify({'error': 'Рекомендация не найдена'}), 404
+        
+        # Читаем HTML файл
+        html_file = Path(__file__).parent / 'knowledge_base' / guideline['file']
+        
+        if not html_file.exists():
+            return jsonify({'error': 'Файл рекомендации не найден'}), 404
+        
+        with open(html_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        return jsonify({
+            'guideline': guideline,
+            'content': content
+        }), 200
+    
+    except Exception as e:
+        logger.error(f"Ошибка получения рекомендации: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
 if __name__ == '__main__':
     print("=" * 50)
     print("OncoMind Backend Server")

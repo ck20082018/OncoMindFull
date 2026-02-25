@@ -317,58 +317,38 @@
             <div class="notification-panel">
                 <div class="notification-header">
                     <i class="fas fa-bell"></i>
-                    <h2>Новые клинические рекомендации</h2>
+                    <h2>Клинические рекомендации</h2>
                 </div>
-                
+
+                <!-- Поиск -->
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="guidelineSearch" class="search-input" placeholder="Поиск рекомендаций..." style="width: 100%; padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: var(--radius-full); font-size: 15px;" oninput="searchGuidelines()">
+                </div>
+
                 <div class="notification-list" id="notificationsList">
-                    <div class="notification-item new">
-                        <div class="notification-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">Рак молочной железы. Клинические рекомендации 2026</div>
-                            <div class="notification-date">Обновлено: 20.02.2026</div>
-                        </div>
-                        <span class="notification-badge">Новое</span>
-                        <a href="#" class="notification-link" onclick="openGuideline('breast-cancer-2026')">Читать <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">Рак лёгкого. Изменения в схеме иммунотерапии</div>
-                            <div class="notification-date">Обновлено: 15.02.2026</div>
-                        </div>
-                        <a href="#" class="notification-link" onclick="openGuideline('lung-cancer-2026')">Читать <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">Меланома. Новые подходы к таргетной терапии</div>
-                            <div class="notification-date">Обновлено: 10.02.2026</div>
-                        </div>
-                        <a href="#" class="notification-link" onclick="openGuideline('melanoma-2026')">Читать <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                    
-                    <div class="notification-item">
-                        <div class="notification-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="notification-content">
-                            <div class="notification-title">Колоректальный рак. Обновлённые рекомендации по адъювантной терапии</div>
-                            <div class="notification-date">Обновлено: 05.02.2026</div>
-                        </div>
-                        <a href="#" class="notification-link" onclick="openGuideline('colorectal-2026')">Читать <i class="fas fa-arrow-right"></i></a>
-                    </div>
+                    <!-- Загружается через JavaScript -->
+                </div>
+
+                <!-- Кнопка "Показать все" -->
+                <div style="text-align: center; margin-top: 25px;">
+                    <button id="showAllBtn" class="btn btn-primary" onclick="showAllGuidelines()" style="display: none; padding: 12px 30px;">
+                        <i class="fas fa-list"></i> Показать все рекомендации
+                    </button>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПРОСМОТРА -->
+    <div class="modal" id="guidelineModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; overflow-y: auto;">
+        <div class="modal-content" style="background: white; border-radius: var(--radius-lg); width: 90%; max-width: 1000px; margin: 40px auto; position: relative; animation: modalSlideIn 0.3s ease;">
+            <button class="modal-close" onclick="closeModal()" style="position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; border-radius: 50%; background: var(--bg-light); border: none; font-size: 20px; cursor: pointer; transition: all 0.3s ease; z-index: 10;">✕</button>
+            
+            <div class="modal-body" id="modalContent" style="padding: 30px; max-height: 80vh; overflow-y: auto;">
+                <!-- Содержимое загружается через JavaScript -->
+            </div>
+        </div>
+    </div>
 
     <!-- ПОДВАЛ -->
     <footer class="footer">
@@ -388,117 +368,8 @@
 
     <script src="../config.js"></script>
     <script>
-        // Данные клинических рекомендаций (как в guidelines.html)
-        const guidelinesData = [
-            {
-                id: 'breast-cancer-2026',
-                title: 'Рак молочной железы. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '20.02.2026',
-                version: '2026',
-                isNew: true,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/633'
-            },
-            {
-                id: 'lung-cancer-2026',
-                title: 'Рак лёгкого. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '15.02.2026',
-                version: '2026',
-                isNew: true,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/618'
-            },
-            {
-                id: 'melanoma-2026',
-                title: 'Меланома кожи. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '10.02.2026',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/625'
-            },
-            {
-                id: 'colorectal-2026',
-                title: 'Колоректальный рак. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '05.02.2026',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/619'
-            },
-            {
-                id: 'prostate-2026',
-                title: 'Рак предстательной железы. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '28.01.2026',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/631'
-            },
-            {
-                id: 'ovarian-2026',
-                title: 'Рак яичников. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '20.01.2026',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/635'
-            },
-            {
-                id: 'stomach-2026',
-                title: 'Рак желудка. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '15.01.2026',
-                version: '2026',
-                isNew: true,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/620'
-            },
-            {
-                id: 'cervix-2026',
-                title: 'Рак шейки матки. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '10.01.2026',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/634'
-            },
-            {
-                id: 'kidney-2026',
-                title: 'Рак почки. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '05.01.2026',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/632'
-            },
-            {
-                id: 'bladder-2026',
-                title: 'Рак мочевого пузыря. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '25.12.2025',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/630'
-            },
-            {
-                id: 'lymphoma-2026',
-                title: 'Лимфомы. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '20.12.2025',
-                version: '2026',
-                isNew: true,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/627'
-            },
-            {
-                id: 'glioma-2026',
-                title: 'Глиомы головного мозга. Клинические рекомендации',
-                source: 'Минздрав РФ',
-                date: '15.12.2025',
-                version: '2026',
-                isNew: false,
-                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/621'
-            }
-        ];
+        let allGuidelines = [];
+        let displayedCount = 5;
 
         // Проверка авторизации при загрузке
         document.addEventListener('DOMContentLoaded', function() {
@@ -521,35 +392,85 @@
                 document.getElementById('doctorSpecialization').textContent = user.specialization;
             }
 
-            // Загрузка уведомлений
-            loadNotifications();
+            // Загрузка рекомендаций
+            loadGuidelines();
         });
 
-        // Загрузка уведомлений
-        function loadNotifications() {
-            // Показываем последние 4 рекомендации (как в guidelines.html)
-            const recentGuidelines = guidelinesData.slice(0, 4);
-            updateNotificationsList(recentGuidelines);
+        // Загрузка рекомендаций с сервера
+        async function loadGuidelines() {
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/guidelines`);
+                if (response.ok) {
+                    const data = await response.json();
+                    allGuidelines = data.guidelines || [];
+                    displayGuidelines(allGuidelines.slice(0, displayedCount));
+                    
+                    // Показываем кнопку "Показать все" если рекомендаций больше 5
+                    if (allGuidelines.length > displayedCount) {
+                        document.getElementById('showAllBtn').style.display = 'inline-block';
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки рекомендаций:', error);
+                // Показываем тестовые данные
+                allGuidelines = [];
+                displayGuidelines([]);
+            }
         }
 
-        // Обновление списка уведомлений
-        function updateNotificationsList(notifications) {
+        // Поиск рекомендаций
+        async function searchGuidelines() {
+            const query = document.getElementById('guidelineSearch').value.trim();
+            
+            if (!query) {
+                displayGuidelines(allGuidelines.slice(0, displayedCount));
+                document.getElementById('showAllBtn').style.display = allGuidelines.length > displayedCount ? 'inline-block' : 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/guidelines?q=${encodeURIComponent(query)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    displayGuidelines(data.guidelines || []);
+                    document.getElementById('showAllBtn').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Ошибка поиска:', error);
+            }
+        }
+
+        // Показать все рекомендации
+        function showAllGuidelines() {
+            displayGuidelines(allGuidelines);
+            document.getElementById('showAllBtn').style.display = 'none';
+        }
+
+        // Отрисовка рекомендаций
+        function displayGuidelines(guidelines) {
             const list = document.getElementById('notificationsList');
             if (!list) return;
 
+            if (guidelines.length === 0) {
+                list.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Рекомендации не найдены</div>';
+                return;
+            }
+
             let html = '';
-            notifications.forEach(notif => {
+            guidelines.forEach(notif => {
                 html += `
-                    <div class="notification-item ${notif.isNew ? 'new' : ''}">
-                        <div class="notification-icon">
+                    <div class="notification-item ${notif.isNew ? 'new' : ''}" style="display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-light); border-radius: var(--radius-md); border: 1px solid #e2e8f0; transition: all 0.3s ease; cursor: pointer;" onclick="openGuideline('${notif.id}')">
+                        <div class="notification-icon" style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-blue);">
                             <i class="fas fa-file-pdf"></i>
                         </div>
-                        <div class="notification-content">
-                            <div class="notification-title">${notif.title}</div>
-                            <div class="notification-date">Обновлено: ${notif.date}</div>
+                        <div class="notification-content" style="flex: 1;">
+                            <div class="notification-title" style="font-weight: 600; color: var(--text-dark); margin-bottom: 5px;">${notif.title}</div>
+                            <div class="notification-date" style="font-size: 12px; color: var(--text-muted);">Обновлено: ${notif.date}</div>
                         </div>
-                        ${notif.isNew ? '<span class="notification-badge">Новое</span>' : ''}
-                        <a href="#" class="notification-link" onclick="openGuideline('${notif.id}'); return false;">Читать <i class="fas fa-arrow-right"></i></a>
+                        ${notif.isNew ? '<span class="notification-badge" style="padding: 4px 12px; background: var(--primary-blue); color: white; border-radius: var(--radius-full); font-size: 11px; font-weight: 600;">Новое</span>' : ''}
+                        <a href="#" class="notification-link" style="color: var(--primary-blue); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 5px;" onclick="event.stopPropagation(); openGuideline('${notif.id}'); return false;">
+                            Читать <i class="fas fa-arrow-right"></i>
+                        </a>
                     </div>
                 `;
             });
@@ -557,15 +478,42 @@
             list.innerHTML = html;
         }
 
-        // Открыть рекомендацию (PDF в новой вкладке)
-        function openGuideline(guidelineId) {
-            const guideline = guidelinesData.find(g => g.id === guidelineId);
-            if (!guideline) {
-                console.error('Рекомендация не найдена:', guidelineId);
-                return;
+        // Открыть рекомендацию (загрузка с сервера и показ в модальном окне)
+        async function openGuideline(guidelineId) {
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/guidelines/${guidelineId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Показываем содержимое в модальном окне
+                    const modal = document.getElementById('guidelineModal');
+                    const modalContent = document.getElementById('modalContent');
+                    
+                    modalContent.innerHTML = data.content;
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    alert('Ошибка загрузки рекомендации');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Не удалось загрузить рекомендацию');
             }
-            // Открываем PDF в новой вкладке
-            window.open(guideline.pdfUrl, '_blank');
+        }
+
+        // Закрыть модальное окно
+        function closeModal() {
+            const modal = document.getElementById('guidelineModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // Закрытие по клику вне модального окна
+        window.onclick = function(event) {
+            const modal = document.getElementById('guidelineModal');
+            if (event.target === modal) {
+                closeModal();
+            }
         }
 
         // Выход
