@@ -7,7 +7,7 @@ const isLocalhost = window.location.hostname === 'localhost' ||
                     window.location.hostname === '127.0.0.1';
 
 // Production URL - ваш сервер
-const PRODUCTION_URL = 'https://155.212.182.149';
+const PRODUCTION_URL = 'https://oncomind.ru';
 
 const API_CONFIG = {
     // Для локальной разработки (Live Server)
