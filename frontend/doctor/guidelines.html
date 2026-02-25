@@ -575,108 +575,142 @@
                     tags: ['Маммология', 'Химиотерапия', 'Гормонотерапия'],
                     status: 'current',
                     description: 'Актуальные рекомендации по диагностике и лечению рака молочной железы.',
-                    content: `
-                        <h1>Клинические рекомендации. Рак молочной железы</h1>
-                        <p><strong>Год утверждения:</strong> 2026</p>
-                        
-                        <h2>1. Классификация</h2>
-                        <p>Рекомендуется использование TNM классификации 8-го пересмотра.</p>
-                        
-                        <h2>2. Диагностика</h2>
-                        <div class="recommendation-box">
-                            <p><strong>Уровень убедительности рекомендаций A</strong></p>
-                            <p>Всем пациентам с подозрением на РМЖ рекомендуется выполнение:</p>
-                            <ul>
-                                <li>Маммографии</li>
-                                <li>УЗИ молочных желёз и регионарных зон</li>
-                                <li>Трепан-биопсии с гистологическим исследованием</li>
-                                <li>Иммуногистохимического исследования (ER, PR, HER2, Ki67)</li>
-                            </ul>
-                        </div>
-                        
-                        <h2>3. Лечение</h2>
-                        <h3>3.1. Хирургическое лечение</h3>
-                        <p>При I-IIA стадиях предпочтительны органосохраняющие операции.</p>
-                        
-                        <h3>3.2. Лекарственная терапия</h3>
-                        <table>
-                            <tr>
-                                <th>Подтип</th>
-                                <th>Рекомендуемая терапия</th>
-                            </tr>
-                            <tr>
-                                <td>Luminal A</td>
-                                <td>Эндокринотерапия</td>
-                            </tr>
-                            <tr>
-                                <td>Luminal B HER2-</td>
-                                <td>ХТ + эндокринотерапия</td>
-                            </tr>
-                            <tr>
-                                <td>HER2+</td>
-                                <td>ХТ + анти-HER2 терапия</td>
-                            </tr>
-                            <tr>
-                                <td>Тройной негативный</td>
-                                <td>ХТ</td>
-                            </tr>
-                        </table>
-                        
-                        <h2>4. Схемы химиотерапии</h2>
-                        <div class="recommendation-box">
-                            <p><strong>Схема AC-T</strong></p>
-                            <p>Доксорубицин 60 мг/м² + Циклофосфамид 600 мг/м² каждые 2-3 нед × 4 цикла, затем Паклитаксел 80 мг/м² еженедельно × 12 нед</p>
-                        </div>
-                    `
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/633'
                 },
                 {
                     id: 'lung-cancer-2026',
-                    title: 'Рак лёгкого. Изменения в схеме иммунотерапии',
+                    title: 'Рак лёгкого. Клинические рекомендации',
                     source: 'Минздрав РФ',
                     date: '15.02.2026',
                     version: '2026',
                     isNew: true,
                     tags: ['Пульмонология', 'Иммунотерапия'],
-                    status: 'updated'
+                    status: 'updated',
+                    description: 'Изменения в схеме иммунотерапии при немелкоклеточном раке лёгкого.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/618'
                 },
                 {
                     id: 'melanoma-2026',
-                    title: 'Меланома. Новые подходы к таргетной терапии',
-                    source: 'NCCN',
+                    title: 'Меланома кожи. Клинические рекомендации',
+                    source: 'Минздрав РФ',
                     date: '10.02.2026',
-                    version: 'v.3.2026',
+                    version: '2026',
+                    isNew: false,
                     tags: ['Дерматология', 'Таргетная терапия'],
-                    status: 'updated'
+                    status: 'updated',
+                    description: 'Новые подходы к таргетной терапии меланомы.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/625'
                 },
                 {
                     id: 'colorectal-2026',
-                    title: 'Колоректальный рак. Адъювантная терапия',
-                    source: 'ESMO',
+                    title: 'Колоректальный рак. Клинические рекомендации',
+                    source: 'Минздрав РФ',
                     date: '05.02.2026',
                     version: '2026',
+                    isNew: false,
                     tags: ['Гастроэнтерология', 'Химиотерапия'],
-                    status: 'current'
+                    status: 'current',
+                    description: 'Диагностика и лечение колоректального рака.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/619'
                 },
                 {
                     id: 'prostate-2026',
-                    title: 'Рак предстательной железы',
+                    title: 'Рак предстательной железы. Клинические рекомендации',
                     source: 'Минздрав РФ',
                     date: '28.01.2026',
                     version: '2026',
+                    isNew: false,
                     tags: ['Урология', 'Гормонотерапия'],
-                    status: 'current'
+                    status: 'current',
+                    description: 'Современные подходы к лечению рака предстательной железы.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/631'
                 },
                 {
                     id: 'ovarian-2026',
-                    title: 'Рак яичников. Поддерживающая терапия',
-                    source: 'NCCN',
+                    title: 'Рак яичников. Клинические рекомендации',
+                    source: 'Минздрав РФ',
                     date: '20.01.2026',
-                    version: 'v.2.2026',
+                    version: '2026',
+                    isNew: false,
                     tags: ['Гинекология', 'Химиотерапия'],
-                    status: 'current'
+                    status: 'current',
+                    description: 'Рекомендации по лечению рака яичников.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/635'
+                },
+                {
+                    id: 'stomach-2026',
+                    title: 'Рак желудка. Клинические рекомендации',
+                    source: 'Минздрав РФ',
+                    date: '15.01.2026',
+                    version: '2026',
+                    isNew: true,
+                    tags: ['Гастроэнтерология', 'Хирургия'],
+                    status: 'current',
+                    description: 'Диагностика и лечение рака желудка.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/620'
+                },
+                {
+                    id: 'cervix-2026',
+                    title: 'Рак шейки матки. Клинические рекомендации',
+                    source: 'Минздрав РФ',
+                    date: '10.01.2026',
+                    version: '2026',
+                    isNew: false,
+                    tags: ['Гинекология', 'Лучевая терапия'],
+                    status: 'current',
+                    description: 'Современные стандарты лечения рака шейки матки.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/634'
+                },
+                {
+                    id: 'kidney-2026',
+                    title: 'Рак почки. Клинические рекомендации',
+                    source: 'Минздрав РФ',
+                    date: '05.01.2026',
+                    version: '2026',
+                    isNew: false,
+                    tags: ['Урология', 'Иммунотерапия'],
+                    status: 'current',
+                    description: 'Лечение почечно-клеточного рака.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/632'
+                },
+                {
+                    id: 'bladder-2026',
+                    title: 'Рак мочевого пузыря. Клинические рекомендации',
+                    source: 'Минздрав РФ',
+                    date: '25.12.2025',
+                    version: '2026',
+                    isNew: false,
+                    tags: ['Урология', 'Химиотерапия'],
+                    status: 'current',
+                    description: 'Диагностика и лечение рака мочевого пузыря.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/630'
+                },
+                {
+                    id: 'lymphoma-2026',
+                    title: 'Лимфомы. Клинические рекомендации',
+                    source: 'Минздрав РФ',
+                    date: '20.12.2025',
+                    version: '2026',
+                    isNew: true,
+                    tags: ['Гематология', 'Химиотерапия'],
+                    status: 'current',
+                    description: 'Лечение неходжкинских лимфом и лимфомы Ходжкина.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/627'
+                },
+                {
+                    id: 'glioma-2026',
+                    title: 'Глиомы головного мозга. Клинические рекомендации',
+                    source: 'Минздрав РФ',
+                    date: '15.12.2025',
+                    version: '2026',
+                    isNew: false,
+                    tags: ['Неврология', 'Нейрохирургия'],
+                    status: 'current',
+                    description: 'Диагностика и лечение глиом головного мозга.',
+                    pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/621'
                 }
             ];
-            
+
             renderGuidelines(guidelinesData);
         }
         
@@ -770,33 +804,13 @@
             const guideline = guidelinesData.find(g => g.id === id);
             if (!guideline) return;
 
-            // Генерируем URL для PDF файла
-            // В реальном проекте это будут пути к реальным PDF файлам
-            const pdfUrl = generatePdfUrl(guideline);
-            
             // Открываем PDF в новой вкладке
-            window.open(pdfUrl, '_blank');
+            window.open(guideline.pdfUrl, '_blank');
         }
 
-        // Генерация URL для PDF
+        // Генерация URL для PDF (устаревшая функция, оставлена для совместимости)
         function generatePdfUrl(guideline) {
-            // Для примера - заглушки PDF файлов
-            // Замените на реальные пути к вашим PDF файлам
-            const pdfFiles = {
-                'breast-cancer-2026': 'https://cr.minzdrav.gov.ru/recomend/633', // Рак молочной железы
-                'lung-cancer-2026': 'https://cr.minzdrav.gov.ru/recomend/618', // Рак лёгкого
-                'melanoma-2026': 'https://cr.minzdrav.gov.ru/recomend/625', // Меланома
-                'colorectal-2026': 'https://cr.minzdrav.gov.ru/recomend/619', // Колоректальный рак
-            };
-
-            // Если есть реальный PDF - возвращаем его
-            if (pdfFiles[guideline.id]) {
-                return pdfFiles[guideline.id];
-            }
-
-            // Иначе открываем поиск по клиническим рекомендациям
-            const searchQuery = encodeURIComponent(guideline.title);
-            return `https://cr.minzdrav.gov.ru/recomend/search?q=${searchQuery}`;
+            return guideline.pdfUrl || 'https://cr.minzdrav.gov.ru/recomend/search';
         }
 
         function closeModal() {
