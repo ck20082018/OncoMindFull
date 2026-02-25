@@ -386,51 +386,157 @@
         </div>
     </footer>
 
+    <script src="../config.js"></script>
     <script>
+        // Данные клинических рекомендаций (как в guidelines.html)
+        const guidelinesData = [
+            {
+                id: 'breast-cancer-2026',
+                title: 'Рак молочной железы. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '20.02.2026',
+                version: '2026',
+                isNew: true,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/633'
+            },
+            {
+                id: 'lung-cancer-2026',
+                title: 'Рак лёгкого. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '15.02.2026',
+                version: '2026',
+                isNew: true,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/618'
+            },
+            {
+                id: 'melanoma-2026',
+                title: 'Меланома кожи. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '10.02.2026',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/625'
+            },
+            {
+                id: 'colorectal-2026',
+                title: 'Колоректальный рак. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '05.02.2026',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/619'
+            },
+            {
+                id: 'prostate-2026',
+                title: 'Рак предстательной железы. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '28.01.2026',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/631'
+            },
+            {
+                id: 'ovarian-2026',
+                title: 'Рак яичников. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '20.01.2026',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/635'
+            },
+            {
+                id: 'stomach-2026',
+                title: 'Рак желудка. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '15.01.2026',
+                version: '2026',
+                isNew: true,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/620'
+            },
+            {
+                id: 'cervix-2026',
+                title: 'Рак шейки матки. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '10.01.2026',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/634'
+            },
+            {
+                id: 'kidney-2026',
+                title: 'Рак почки. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '05.01.2026',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/632'
+            },
+            {
+                id: 'bladder-2026',
+                title: 'Рак мочевого пузыря. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '25.12.2025',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/630'
+            },
+            {
+                id: 'lymphoma-2026',
+                title: 'Лимфомы. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '20.12.2025',
+                version: '2026',
+                isNew: true,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/627'
+            },
+            {
+                id: 'glioma-2026',
+                title: 'Глиомы головного мозга. Клинические рекомендации',
+                source: 'Минздрав РФ',
+                date: '15.12.2025',
+                version: '2026',
+                isNew: false,
+                pdfUrl: 'https://cr.minzdrav.gov.ru/recomend/621'
+            }
+        ];
+
         // Проверка авторизации при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             const user = JSON.parse(localStorage.getItem('user'));
-            
+
             if (!user) {
                 window.location.href = '../login.html';
                 return;
             }
-            
+
             if (user.role !== 'doctor') {
                 alert('Этот раздел только для врачей');
                 window.location.href = '../index.html';
                 return;
             }
-            
+
             // Заполняем информацию о враче
             document.getElementById('doctorName').textContent = user.full_name;
             if (user.specialization) {
                 document.getElementById('doctorSpecialization').textContent = user.specialization;
             }
-            
+
             // Загрузка уведомлений
             loadNotifications();
         });
-        
-        // Загрузка уведомлений с сервера
-        async function loadNotifications() {
-            try {
-                const response = await fetch(`${API_CONFIG.BASE_URL}/api/doctor/guidelines/new`);
-                if (response.ok) {
-                    const data = await response.json();
-                    updateNotificationsList(data.notifications);
-                }
-            } catch (error) {
-                console.error('Ошибка загрузки уведомлений:', error);
-                // Показываем тестовые данные
-            }
+
+        // Загрузка уведомлений
+        function loadNotifications() {
+            // Показываем последние 4 рекомендации (как в guidelines.html)
+            const recentGuidelines = guidelinesData.slice(0, 4);
+            updateNotificationsList(recentGuidelines);
         }
-        
+
         // Обновление списка уведомлений
         function updateNotificationsList(notifications) {
             const list = document.getElementById('notificationsList');
             if (!list) return;
-            
+
             let html = '';
             notifications.forEach(notif => {
                 html += `
@@ -443,20 +549,25 @@
                             <div class="notification-date">Обновлено: ${notif.date}</div>
                         </div>
                         ${notif.isNew ? '<span class="notification-badge">Новое</span>' : ''}
-                        <a href="#" class="notification-link" onclick="openGuideline('${notif.id}')">Читать <i class="fas fa-arrow-right"></i></a>
+                        <a href="#" class="notification-link" onclick="openGuideline('${notif.id}'); return false;">Читать <i class="fas fa-arrow-right"></i></a>
                     </div>
                 `;
             });
-            
+
             list.innerHTML = html;
         }
-        
-        // Открыть рекомендацию
+
+        // Открыть рекомендацию (PDF в новой вкладке)
         function openGuideline(guidelineId) {
-            // Открыть в новой вкладке или модальном окне
-            window.open(`guidelines-viewer.html?id=${guidelineId}`, '_blank');
+            const guideline = guidelinesData.find(g => g.id === guidelineId);
+            if (!guideline) {
+                console.error('Рекомендация не найдена:', guidelineId);
+                return;
+            }
+            // Открываем PDF в новой вкладке
+            window.open(guideline.pdfUrl, '_blank');
         }
-        
+
         // Выход
         document.getElementById('logoutBtn').addEventListener('click', function(e) {
             e.preventDefault();
@@ -464,7 +575,5 @@
             window.location.href = '../index.html';
         });
     </script>
-    <script src="../config.js"></script>
-    <script src="../script.js"></script>
 </body>
 </html>
