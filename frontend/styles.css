@@ -383,6 +383,7 @@ h2::after {
     display: block !important;
     position: relative;
     z-index: 1;
+    border-radius: 50% !important;
 }
 
 .team-name {
