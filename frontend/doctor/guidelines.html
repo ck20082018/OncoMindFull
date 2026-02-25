@@ -684,32 +684,37 @@
         function renderGuidelines(guidelines) {
             const grid = document.getElementById('guidelinesGrid');
             let html = '';
-            
+
             guidelines.forEach(guideline => {
                 html += `
                     <div class="guideline-card ${guideline.isNew ? 'new' : ''}" onclick="openGuideline('${guideline.id}')">
                         <span class="guideline-source">${guideline.source}</span>
-                        <div class="guideline-title">${guideline.title}</div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <i class="fas fa-file-pdf" style="font-size: 24px; color: #ef4444;"></i>
+                            <div class="guideline-title" style="flex: 1; margin: 0;">${guideline.title}</div>
+                        </div>
                         <div class="guideline-meta">
                             <span><i class="far fa-calendar"></i> ${guideline.date}</span>
                             <span><i class="far fa-file-alt"></i> вер. ${guideline.version}</span>
                         </div>
                         <div class="guideline-tags">
-                            ${guideline.tags.map(tag => `<span class="guideline-tag">${tag}</span>`).join('')}
+                            ${guideline.tags ? guideline.tags.map(tag => `<span class="guideline-tag">${tag}</span>`).join('') : ''}
                         </div>
                         ${guideline.description ? `<p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 15px;">${guideline.description}</p>` : ''}
                         <div class="guideline-footer">
                             <div class="guideline-status">
-                                ${guideline.status === 'current' 
-                                    ? '<i class="fas fa-check-circle status-current"></i><span class="status-current">Действующая</span>' 
+                                ${guideline.status === 'current'
+                                    ? '<i class="fas fa-check-circle status-current"></i><span class="status-current">Действующая</span>'
                                     : '<i class="fas fa-exclamation-circle status-updated"></i><span class="status-updated">Обновлена</span>'}
                             </div>
-                            <span class="guideline-btn">Читать <i class="fas fa-arrow-right"></i></span>
+                            <span class="guideline-btn" style="display: inline-flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-external-link-alt"></i> Открыть PDF
+                            </span>
                         </div>
                     </div>
                 `;
             });
-            
+
             grid.innerHTML = html;
         }
         
@@ -760,38 +765,40 @@
             renderGuidelines(filtered);
         }
         
-        // Открытие рекомендации
+        // Открытие рекомендации (PDF)
         function openGuideline(id) {
             const guideline = guidelinesData.find(g => g.id === id);
             if (!guideline) return;
+
+            // Генерируем URL для PDF файла
+            // В реальном проекте это будут пути к реальным PDF файлам
+            const pdfUrl = generatePdfUrl(guideline);
             
-            document.getElementById('modalTitle').textContent = guideline.title;
-            document.getElementById('modalSource').textContent = guideline.source;
-            document.getElementById('modalDate').textContent = `Версия ${guideline.version} • ${guideline.date}`;
-            
-            // Если есть полный контент, показываем его, иначе заглушку
-            if (guideline.content) {
-                document.getElementById('modalContent').innerHTML = guideline.content;
-            } else {
-                document.getElementById('modalContent').innerHTML = `
-                    <h1>${guideline.title}</h1>
-                    <p><strong>Источник:</strong> ${guideline.source}</p>
-                    <p><strong>Дата публикации:</strong> ${guideline.date}</p>
-                    <p><strong>Версия:</strong> ${guideline.version}</p>
-                    <div style="background: var(--bg-light); padding: 30px; text-align: center; border-radius: var(--radius-md); margin-top: 30px;">
-                        <i class="fas fa-file-pdf" style="font-size: 60px; color: var(--primary-blue); margin-bottom: 20px;"></i>
-                        <p>Полный текст рекомендации доступен для скачивания в формате PDF</p>
-                        <button class="btn btn-primary" onclick="downloadGuideline()" style="margin-top: 20px;">
-                            <i class="fas fa-download"></i> Скачать PDF
-                        </button>
-                    </div>
-                `;
-            }
-            
-            document.getElementById('guidelineModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            // Открываем PDF в новой вкладке
+            window.open(pdfUrl, '_blank');
         }
-        
+
+        // Генерация URL для PDF
+        function generatePdfUrl(guideline) {
+            // Для примера - заглушки PDF файлов
+            // Замените на реальные пути к вашим PDF файлам
+            const pdfFiles = {
+                'breast-cancer-2026': 'https://cr.minzdrav.gov.ru/recomend/633', // Рак молочной железы
+                'lung-cancer-2026': 'https://cr.minzdrav.gov.ru/recomend/618', // Рак лёгкого
+                'melanoma-2026': 'https://cr.minzdrav.gov.ru/recomend/625', // Меланома
+                'colorectal-2026': 'https://cr.minzdrav.gov.ru/recomend/619', // Колоректальный рак
+            };
+
+            // Если есть реальный PDF - возвращаем его
+            if (pdfFiles[guideline.id]) {
+                return pdfFiles[guideline.id];
+            }
+
+            // Иначе открываем поиск по клиническим рекомендациям
+            const searchQuery = encodeURIComponent(guideline.title);
+            return `https://cr.minzdrav.gov.ru/recomend/search?q=${searchQuery}`;
+        }
+
         function closeModal() {
             document.getElementById('guidelineModal').classList.remove('active');
             document.body.style.overflow = '';
