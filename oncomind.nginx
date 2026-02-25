@@ -1,0 +1,51 @@
+server {
+    listen 80;
+    server_name oncomind.ru www.oncomind.ru;  # Замените на ваш домен
+
+    # Логирование
+    access_log /var/log/nginx/oncomind.access.log;
+    error_log /var/log/nginx/oncomind.error.log;
+
+    # Максимальный размер загружаемых файлов (10MB)
+    client_max_body_size 10M;
+
+    # Frontend - статические файлы
+    location / {
+        root /var/www/oncomind/frontend;
+        try_files $uri $uri/ /index.html;
+        
+        # Кэширование статических файлов
+        location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+    }
+
+    # Backend - API проксирование
+    location /api/ {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        
+        # Заголовки
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Таймауты
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+        
+        # Для CORS
+        proxy_set_header Connection "";
+        
+        # Буферы
+        proxy_buffering off;
+    }
+
+    # Блокировка доступа к служебным файлам
+    location ~ /\. {
+        deny all;
+    }
+}

@@ -1,0 +1,20 @@
+[Unit]
+Description=OncoMind Backend Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/oncomind/backend
+Environment="PATH=/var/www/oncomind/backend/venv/bin"
+ExecStart=/var/www/oncomind/backend/venv/bin/python app.py
+Restart=always
+RestartSec=10
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
