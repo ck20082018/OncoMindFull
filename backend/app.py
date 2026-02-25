@@ -26,14 +26,7 @@ app.secret_key = secrets.token_hex(32)
 # Настройка CORS для локальной разработки и продакшена
 CORS(app, resources={
     r"/api/*": {
-        "origins": [
-            "http://127.0.0.1:5500",
-            "http://localhost:5500",
-            "http://127.0.0.1:8080",
-            "http://localhost:8080",
-            "https://oncomind.ru",
-            "http://oncomind.ru"
-        ],
+        "origins": "*",  # Разрешить все (для разработки)
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }

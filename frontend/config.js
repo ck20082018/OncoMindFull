@@ -1,19 +1,16 @@
 // =============================================================================
 // OncoMind - Конфигурация API
 // =============================================================================
-// Этот файл определяет URL бэкенда в зависимости от окружения
+// Автоматическое определение окружения
 
-// Для локальной разработки (Live Server)
+const isLocalhost = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1';
+
 const API_CONFIG = {
-    BASE_URL: 'http://127.0.0.1:5000',
+    // Для локальной разработки (Live Server)
+    BASE_URL: isLocalhost ? 'http://127.0.0.1:5000' : 'https://oncomind.ru',
     TIMEOUT: 30000
 };
-
-// Для продакшена (раскомментируй при загрузке на сервер)
-// const API_CONFIG = {
-//     BASE_URL: 'https://oncomind.ru',
-//     TIMEOUT: 30000
-// };
 
 // Экспорт для использования в других файлах
 if (typeof module !== 'undefined' && module.exports) {
