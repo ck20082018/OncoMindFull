@@ -1,300 +1,180 @@
-# 🔑 Настройка Yandex Cloud для OncoMind
+# 🔑 Yandex Cloud Setup Guide
 
-## 📋 Шаг 1: Регистрация в Yandex Cloud
+## Быстрая настройка за 15 минут
 
-1. Перейди на https://cloud.yandex.ru
-2. Зарегистрируйся (нужен Яндекс ID)
-3. Привяжи карту (дадут 4000₽ на тестирование)
+### 1️⃣ Создайте сервисный аккаунт (5 мин)
 
----
+**Через веб-консоль:**
 
-## 📋 Шаг 2: Создание сервисного аккаунта
-
-### Вариант A: Через консоль (проще)
-
-```bash
-# Установи Yandex Cloud CLI (если нет)
-# https://cloud.yandex.ru/docs/cli/quickstart
-
-# Авторизуйся
-yc init
-
-# Создай сервисный аккаунт
-yc iam service-account create --name oncomind-ai
-
-# Добавь роль для доступа к YandexGPT
-yc iam service-account add-role \
-  --role ai.languageModels.user \
-  --service-account-name oncomind-ai
-
-# Создай ключ (сохранится в файл)
-yc iam key create \
-  --service-account-name oncomind-ai \
-  --output oncomind_sa_key.json
-```
-
-### Вариант B: Через веб-консоль
-
-1. Зайди в https://console.cloud.yandex.ru
-2. **Сервисные аккаунты** → **Создать**
-3. Имя: `oncomind-ai`
-4. Роль: **ai.languageModels.user**
-5. **Создать ключ** → скачается JSON файл
+1. Перейдите на https://console.cloud.yandex.ru/
+2. Войдите под аккаунтом Яндекс
+3. Выберите облако → каталог (или создайте новый)
+4. **Запомните ID каталога** (начинается с `b1c...`)
+5. left menu → **Service Accounts** → **Create service account**
+6. Name: `oncomind-ai`
+7. Role: **ai.languageModels.user**
+8. Click **Create**
 
 ---
 
-## 📋 Шаг 3: Получить ID каталога
+### 2️⃣ Создайте ключ (3 мин)
 
-```bash
-# Через CLI
-yc resource-manager folder list
-
-# Или в веб-консоли:
-# Выбери проект → скопируй ID каталога из URL
-# Выглядит как: b1cxxxxxxxxxxxxxxxxxxxxxxxxxx
-```
+1. В списке аккаунтов нажмите `oncomind-ai`
+2. **Authorized keys** → **Create new key**
+3. Скачайте файл `key.json`
+4. **Переименуйте** в `oncomind_sa_key.json`
+5. **Положите** в папку: `d:\M2\OncoMindFull\oncology_ai_assistant\`
 
 ---
 
-## 📋 Шаг 4: Настройка .env файла
+### 3️⃣ Получите IAM токен (2 мин)
 
-### Для AI Pipeline (FastAPI)
-
-**Файл:** `d:\M2\OncoMindFull\oncology_ai_assistant\.env`
-
-```env
-# =============================================================================
-# YANDEX CLOUD - Аутентификация
-# =============================================================================
-
-# ID каталога (обязательно)
-YC_FOLDER_ID=b1cxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-# Сервисный аккаунт (путь к JSON ключу)
-YC_SERVICE_ACCOUNT_KEY=oncomind_sa_key.json
-
-# Или IAM-токен для быстрого теста (действует 1 час)
-# Получить через: yc iam create-token
-# YC_IAM_TOKEN=t1.xxxxxxxxxxxxx
-
-# =============================================================================
-# НАСТРОЙКИ ПРИЛОЖЕНИЯ
-# =============================================================================
-LOG_LEVEL=INFO
-KNOWLEDGE_BASE_DIR=knowledge_base_data/minzdrav
-```
-
-### Для Flask Backend (если будет интегрирован)
-
-**Файл:** `d:\M2\OncoMindFull\backend\.env`
-
-```env
-# Путь к AI Pipeline
-AI_PIPELINE_URL=http://127.0.0.1:8000
-
-# Или напрямую YandexGPT (если AI Pipeline не используется)
-YC_FOLDER_ID=b1cxxxxxxxxxxxxxxxxxxxxxxxxxx
-YC_SERVICE_ACCOUNT_KEY=../oncology_ai_assistant/oncomind_sa_key.json
-```
-
----
-
-## 📋 Шаг 5: Проверка подключения
-
-### Тест через CLI
+**Через CLI (если установлен yc):**
 
 ```bash
-# Создай IAM-токен
-yc iam create-token
-
-# Проверь YandexGPT
-curl -X POST \
-  'https://llm.api.cloud.yandex.net/foundationModels/v1/completion' \
-  -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $(yc iam create-token)" \
-  -H "x-folder-id: b1cxxxxxxxxxxxxxxxxxxxxxxxxxx" \
-  -d '{
-    "modelUri": "gpt://b1cxxxxxxxxxxxxxxxxxxxxxxxxxx/yandexgpt-pro",
-    "completionOptions": {
-      "temperature": 0.1,
-      "maxTokens": 100
-    },
-    "messages": [
-      {"role": "user", "text": "Привет! Как дела?"}
-    ]
-  }'
-```
-
-### Тест через Python
-
-```python
-# test_yandex_gpt.py
-from oncology_ai_assistant.src.llm.yandex_client import (
-    YandexGPTClient,
-    YandexGPTConfig
-)
-import os
-from dotenv import load_dotenv
-
-# Загружаем .env
-load_dotenv('oncology_ai_assistant/.env')
-
-# Создаём конфиг
-config = YandexGPTConfig(
-    folder_id=os.getenv('YC_FOLDER_ID'),
-    service_account_key_path=os.getenv('YC_SERVICE_ACCOUNT_KEY')
-)
-
-# Создаём клиент
-client = YandexGPTClient(config)
-
-# Тестовый запрос
-response = client.complete(
-    user_text="Привет! Напиши краткий ответ.",
-    system_prompt="Ты полезный ассистент.",
-    temperature=0.1,
-    max_tokens=100
-)
-
-print(f"Ответ: {response.text}")
-print(f"Токены: {response.total_tokens}")
-print(f"Время: {response.processing_time:.2f}с")
-```
-
-**Запуск:**
-```bash
-cd d:\M2\OncoMindFull
-python test_yandex_gpt.py
-```
-
----
-
-## 📋 Шаг 6: Запуск AI Pipeline
-
-```bash
-# Перейди в директорию AI
 cd d:\M2\OncoMindFull\oncology_ai_assistant
+yc iam create-token --key-file oncomind_sa_key.json
+```
 
-# Установи зависимости (если нет)
+**Через API (если нет yc):**
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d @oncomind_sa_key.json \
+  https://iam.api.cloud.yandex.net/iam/v1/tokens
+```
+
+Сохраните токен (начинается с `t1.`) — он нужен для тестов!
+
+---
+
+### 4️⃣ Настройте .env (2 мин)
+
+```bash
+cd d:\M2\OncoMindFull\oncology_ai_assistant
+copy .env.example .env
+```
+
+**Откройте `.env` и заполните:**
+
+```env
+YC_FOLDER_ID=b1c...                    # ← Ваш ID каталога
+YC_SERVICE_ACCOUNT_KEY=oncomind_sa_key.json
+YC_IAM_TOKEN=t1....                    # ← Ваш токен
+AI_PORT=8000
+DEBUG=True
+```
+
+---
+
+### 5️⃣ Установите зависимости (3 мин)
+
+```bash
+cd d:\M2\OncoMindFull\oncology_ai_assistant
 pip install -r requirements.txt
+```
 
-# Запусти FastAPI сервер
+---
+
+### 6️⃣ Запустите AI сервер
+
+```bash
 uvicorn src.core.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-**Проверка:**
-```bash
-# Health check
-curl http://localhost:8000/health
+**Проверьте:**
 
-# Список рекомендаций
-curl http://localhost:8000/api/guidelines/list
+- Откройте http://localhost:8000/health
+- Должно вернуться: `{"status":"healthy"}`
+
+---
+
+## 🧪 Тестирование
+
+### Тест 1: Проверка YandexGPT
+
+```bash
+curl -X POST http://localhost:8000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d "{\"text\":\"Пациенту назначен доксорубицин 60 мг/м2. Проверь совместимость.\",\"mode\":\"doctor\"}"
+```
+
+**Ответ должен содержать:**
+- Анализ препарата
+- Проверку совместимости
+- Рекомендации
+
+---
+
+### Тест 2: Поиск по рекомендациям
+
+```bash
+curl http://localhost:8000/api/guidelines/search?q=рак%20молочной%20железы
 ```
 
 ---
 
-## 💰 Стоимость YandexGPT
+## 💰 Стоимость
 
-### Тарифы (на 2026 год)
+**YandexGPT тарифы:**
 
-| Модель | Стоимость |
-|--------|-----------|
-| **YandexGPT Pro** | ~1₽ за 1000 токенов |
-| **YandexGPT Lite** | ~0.3₽ за 1000 токенов |
+- ~0.5-1₽ за 1000 токенов
+- 1 запрос = ~100-300 токенов
+- **Для тестов:** ~100-300₽/мес
+- **Для продакшена:** ~1000-3000₽/мес
 
-### Примерный расход
-
-| Сценарий | Токены/запрос | Запросов/день | ₽/мес |
-|----------|---------------|---------------|-------|
-| **Демо** | ~500 | 10 | ~150 |
-| **Тесты** | ~1000 | 50 | ~1500 |
-| **Продакшен** | ~2000 | 200 | ~12000 |
-
-**Гранты:**
-- Новые пользователи: 4000₽ на 60 дней
-- Студенты: дополнительные гранты
+**Лимиты:**
+- 1 млн токенов в месяц по умолчанию
+- Можно увеличить в консоли
 
 ---
 
 ## 🔒 Безопасность
 
-### Что нельзя делать:
+**Никогда не коммитьте:**
+- `.env` файл
+- `oncomind_sa_key.json`
+- IAM токены
+
+**Добавьте в `.gitignore`:**
 
 ```
-❌ Коммитить .env с реальными ключами в Git
-❌ Публиковать oncomind_sa_key.json в репозитории
-❌ Передавать ключи третьим лицам
-```
-
-### Что нужно делать:
-
-```
-✅ Добавить .env в .gitignore
-✅ Хранить ключи в секретах (GitHub Secrets, CI/CD)
-✅ Регулярно обновлять ключи (раз в 3-6 мес)
-✅ Использовать разные аккаунты для dev/prod
+.env
+*.json
+!config.json
+logs/
+*.log
 ```
 
 ---
 
-## 🛠️ Решение проблем
+## ❓ Troubleshooting
 
-### Ошибка: "IAM-токен недействителен"
+### Ошибка: "IAM токен недействителен"
 
 **Решение:**
-```bash
-# Получить новый токен
-yc iam create-token
-
-# Или пересоздать ключ сервисного аккаунта
-yc iam key create --service-account-name oncomind-ai
-```
+- Токен действует 1 час
+- Получите новый: `yc iam create-token --key-file oncomind_sa_key.json`
+- Обновите в `.env`
 
 ### Ошибка: "Нет доступа к YandexGPT"
 
 **Решение:**
-```bash
-# Проверь роли
-yc iam service-account list-roles oncomind-ai
+- Проверьте роль у сервисного аккаунта
+- Должна быть: `ai.languageModels.user`
+- Добавьте: `yc iam service-account add-role --role ai.languageModels.user --service-account-name oncomind-ai`
 
-# Должна быть: ai.languageModels.user
-# Если нет — добавь:
-yc iam service-account add-role \
-  --role ai.languageModels.user \
-  --service-account-name oncomind-ai
-```
-
-### Ошибка: "Folder ID не найден"
+### Ошибка: "Каталог не найден"
 
 **Решение:**
-```bash
-# Проверь список каталогов
-yc resource-manager folder list
-
-# Скопируй правильный ID (выглядит как b1cxxxx...)
-```
+- Проверьте ID каталога
+- Должен начинаться с `b1c...`
+- Получите: `yc resource-manager folder list`
 
 ---
 
-## 📞 Поддержка
+## 📞 Контакты
 
-- Документация Yandex Cloud: https://cloud.yandex.ru/docs
-- YandexGPT: https://cloud.yandex.ru/docs/yandexgpt/
 - Telegram: @oncomind
-
----
-
-## ✅ Чеклист готовности
-
-```
-□ Yandex Cloud аккаунт создан
-□ Сервисный аккаунт создан
-□ Роль ai.languageModels.user добавлена
-□ Ключ скачан (oncomind_sa_key.json)
-□ ID каталога получен
-□ .env файл создан и заполнен
-□ Тестовый запрос успешен
-□ AI Pipeline запущен (порт 8000)
-```
-
-**После этого AI-анализ готов к работе!** 🎉
+- Email: team@oncomind.ai

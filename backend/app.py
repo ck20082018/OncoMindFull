@@ -32,6 +32,9 @@ CORS(app, resources={
     }
 })
 
+# Конфигурация AI Pipeline
+AI_PIPELINE_URL = os.environ.get('AI_PIPELINE_URL', 'http://127.0.0.1:8000')
+
 # Конфигурация
 UPLOAD_FOLDER = Path(__file__).parent / 'uploads'
 UPLOAD_FOLDER.mkdir(exist_ok=True)
@@ -540,6 +543,72 @@ def get_guideline(guideline_id):
     
     except Exception as e:
         logger.error(f"Ошибка получения рекомендации: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@app.route('/api/analyze', methods=['POST'])
+def analyze():
+    """
+    Анализ медицинского документа через AI Pipeline
+    
+    Параметры:
+    - file: файл (PDF, JPG, PNG, TXT, XLSX)
+    - mode: 'doctor' или 'patient'
+    - query: дополнительный запрос (опционально)
+    """
+    try:
+        import requests
+        
+        # Проверка файла
+        if 'file' not in request.files:
+            return jsonify({'error': 'Нет файла'}), 400
+        
+        file = request.files['file']
+        mode = request.form.get('mode', 'doctor')
+        query = request.form.get('query', '')
+        
+        if file.filename == '':
+            return jsonify({'error': 'Файл не выбран'}), 400
+        
+        # Подготовка файла для отправки на AI Pipeline
+        files = {'file': (file.filename, file, file.content_type)}
+        data = {'mode': mode, 'query': query}
+        
+        logger.info(f"Отправка файла на AI анализ: {file.filename}, mode={mode}")
+        
+        # Отправка на AI Pipeline
+        try:
+            response = requests.post(
+                f"{AI_PIPELINE_URL}/api/analyze",
+                files=files,
+                data=data,
+                timeout=120  # 2 минуты на анализ
+            )
+            
+            if response.ok:
+                return jsonify(response.json())
+            else:
+                logger.error(f"Ошибка AI Pipeline: {response.status_code} - {response.text}")
+                return jsonify({
+                    'error': 'Ошибка AI анализа',
+                    'details': response.text
+                }), 500
+                
+        except requests.exceptions.ConnectionError:
+            logger.error(f"Не удалось подключиться к AI Pipeline: {AI_PIPELINE_URL}")
+            return jsonify({
+                'error': 'AI сервер недоступен',
+                'message': 'Сервис анализа временно недоступен. Попробуйте позже.'
+            }), 503
+        except requests.exceptions.Timeout:
+            logger.error("Превышено время ожидания AI Pipeline")
+            return jsonify({
+                'error': 'Превышено время ожидания',
+                'message': 'Анализ занимает больше времени. Попробуйте снова.'
+            }), 504
+            
+    except Exception as e:
+        logger.error(f"Критическая ошибка анализа: {e}", exc_info=True)
         return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
 
