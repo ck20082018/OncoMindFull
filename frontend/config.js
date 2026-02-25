@@ -10,8 +10,8 @@ const isLocalhost = window.location.hostname === 'localhost' ||
 const PRODUCTION_URL = 'https://oncomind.ru';
 
 const API_CONFIG = {
-    // Для локальной разработки (Live Server)
-    BASE_URL: isLocalhost ? 'http://127.0.0.1:5000' : PRODUCTION_URL,
+    // Для локальной разработки (Live Server) - используем сервер
+    BASE_URL: isLocalhost ? PRODUCTION_URL : PRODUCTION_URL,
     TIMEOUT: 30000
 };
 
