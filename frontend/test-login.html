@@ -362,26 +362,27 @@
         </div>
     </footer>
 
+    <script src="config.js"></script>
     <script>
         async function quickLogin(email, password, role) {
             try {
-                const response = await fetch('http://localhost:5000/api/login', {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ email, password })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     // Сохраняем данные пользователя
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    
+
                     // Показываем уведомление
                     alert(`✅ Вход выполнен как ${data.user.full_name}`);
-                    
+
                     // Перенаправляем в зависимости от роли
                     if (role === 'doctor') {
                         window.location.href = 'doctor/dashboard.html';
@@ -393,10 +394,10 @@
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('❌ Не удалось подключиться к серверу. Убедитесь, что бэкенд запущен (python backend/app.py)');
+                alert('❌ Не удалось подключиться к серверу. Проверьте подключение к интернету.');
             }
         }
-        
+
         // Добавляем тестовые данные в localStorage для демо (если сервер не запущен)
         function demoLogin(email, name, role) {
             const user = {
@@ -410,9 +411,9 @@
                 birth_date: role === 'patient' ? '15.03.1965' : null,
                 phone: role === 'patient' ? '+7 (999) 123-45-67' : null
             };
-            
+
             localStorage.setItem('user', JSON.stringify(user));
-            
+
             if (role === 'doctor') {
                 window.location.href = 'doctor/dashboard.html';
             } else {
