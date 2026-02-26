@@ -571,6 +571,8 @@
                     : 'Проверь соответствие клиническим рекомендациям');
 
             try {
+                console.log('Отправка запроса на анализ...', formData);
+                
                 // Отправляем на Flask backend (который перенаправит на AI)
                 const response = await fetch(`${API_CONFIG.BASE_URL}/api/analyze`, {
                     method: 'POST',
@@ -578,6 +580,7 @@
                 });
 
                 const data = await response.json();
+                console.log('Ответ сервера:', data);
                 
                 document.getElementById('loadingOverlay').style.display = 'none';
 
@@ -593,7 +596,7 @@
                     // Отображаем результат
                     displayResults(data);
                 } else {
-                    alert('Ошибка анализа: ' + (data.error || 'Неизвестная ошибка'));
+                    alert('Ошибка анализа: ' + (data.error || data.details || 'Неизвестная ошибка'));
                 }
             } catch (error) {
                 console.error('Ошибка:', error);
@@ -603,12 +606,40 @@
         }
 
         function displayResults(data) {
+            console.log('Отображение результата:', data);
+            
             // Показываем результат анализа
             const resultDiv = document.getElementById(`${currentMode}Results`);
             
-            if (data.analysis || data.result) {
-                const resultText = data.analysis || data.result || 'Анализ завершён';
-                
+            // Пытаемся извлечь текст результата из разных форматов
+            let resultText = null;
+            
+            if (typeof data === 'string') {
+                resultText = data;
+            } else if (data.analysis) {
+                resultText = data.analysis;
+            } else if (data.result) {
+                resultText = data.result;
+            } else if (data.response) {
+                resultText = data.response;
+            } else if (data.text) {
+                resultText = data.text;
+            } else if (data.content) {
+                resultText = data.content;
+            } else if (data.details) {
+                // Если пришёл JSON от AI сервера
+                try {
+                    const details = typeof data.details === 'string' ? JSON.parse(data.details) : data.details;
+                    resultText = details.analysis || details.result || details.text || JSON.stringify(details, null, 2);
+                } catch (e) {
+                    resultText = data.details;
+                }
+            } else {
+                // Если ничего не подошло, показываем что есть
+                resultText = JSON.stringify(data, null, 2);
+            }
+            
+            if (resultText) {
                 resultDiv.innerHTML = `
                     <div style="background: white; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md);">
                         <h3 style="color: var(--primary-dark); margin-bottom: 20px;">
