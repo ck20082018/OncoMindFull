@@ -21,7 +21,17 @@ git pull origin main
 # 3. Установка зависимостей
 echo "📦 Установка зависимостей..."
 cd oncology_ai_assistant
+
+# Создаём venv если нет
+if [ ! -d "venv" ]; then
+    echo "🔧 Создание виртуального окружения..."
+    python3 -m venv venv
+fi
+
+# Активируем и устанавливаем
+source venv/bin/activate
 pip install -r requirements.txt
+deactivate
 
 # 4. Копирование рекомендаций
 echo "📚 Копирование клинических рекомендаций..."
@@ -44,9 +54,11 @@ cd /var/www/oncomind/oncology_ai_assistant
 pkill -f "uvicorn src.core.main:app" || true
 sleep 2
 
-# Запускаем в фоне
+# Запускаем в фоне через venv
+source venv/bin/activate
 nohup python -m uvicorn src.core.main:app --host 0.0.0.0 --port 8000 > /var/log/oncomind_ai.log 2>&1 &
 echo $! > /var/run/oncomind_ai.pid
+deactivate
 
 sleep 5
 
