@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — История анализов</title>
+
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .history-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .analysis-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .analysis-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+
+        .analysis-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .analysis-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .analysis-date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .analysis-mode {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary-blue);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .analysis-preview {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .analysis-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .analysis-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .status-completed {
+            color: #10b981;
+        }
+
+        .status-processing {
+            color: #f59e0b;
+        }
+
+        .view-btn {
+            padding: 8px 20px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            background: var(--primary-deep);
+            transform: translateX(3px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Модальное окно просмотра */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="dashboard.html" class="nav-link">Кабинет</a>
+                <a href="profile.html" class="nav-link">Профиль</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <section>
+        <div class="container history-container">
+            <div class="history-header">
+                <h1>История анализов</h1>
+                <a href="analyze.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Новый анализ
+                </a>
+            </div>
+
+            <div class="analysis-list" id="analysisList">
+                <!-- Загружается через JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПРОСМОТРА -->
+    <div class="modal" id="analysisModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-header">
+                <h2 id="modalTitle" style="margin: 0;"></h2>
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <span class="analysis-mode" id="modalMode"></span>
+                    <span style="color: var(--text-muted);" id="modalDate"></span>
+                </div>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Содержимое загружается через JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2026 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../config.js"></script>
+    <script>
+        let analyses = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'doctor') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            loadAnalyses();
+        });
+
+        // Загрузка анализов из localStorage
+        function loadAnalyses() {
+            // Получаем из localStorage
+            const stored = localStorage.getItem('analyses');
+            if (stored) {
+                analyses = JSON.parse(stored);
+            }
+
+            // Если пусто - показываем демо данные
+            if (analyses.length === 0) {
+                analyses = [
+                    {
+                        id: 1,
+                        title: 'Анализ назначения доксорубицина',
+                        mode: 'interaction',
+                        modeName: 'Проверка совместимости',
+                        date: new Date().toISOString(),
+                        status: 'completed',
+                        preview: 'Проведён анализ совместимости назначенных препаратов. Выявлено потенциальное взаимодействие...',
+                        result: 'Проведён полный анализ назначенных препаратов.\n\n**Выявленные взаимодействия:**\n\n1. **Доксорубицин + Циклофосфамид**: Усиление кардиотоксичности. Рекомендуется мониторинг функции сердца.\n\n2. **Доксорубицин + Паклитаксел**: Возможна нейтропения. Требуется регулярный контроль крови.\n\n**Рекомендации:**\n- Контроль ЭКГ перед каждым циклом\n- Общий анализ крови еженедельно\n- Рассмотреть поддержку колониестимулирующими факторами'
+                    }
+                ];
+            }
+
+            renderAnalyses();
+        }
+
+        // Отрисовка списка
+        function renderAnalyses() {
+            const list = document.getElementById('analysisList');
+            
+            if (analyses.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-medical"></i>
+                        <h3>Нет анализов</h3>
+                        <p>Вы ещё не проводили анализ документов</p>
+                        <a href="analyze.html" class="btn btn-primary">Провести первый анализ</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            analyses.forEach(analysis => {
+                const date = new Date(analysis.date).toLocaleString('ru-RU');
+                html += `
+                    <div class="analysis-card" onclick="viewAnalysis(${analysis.id})">
+                        <div class="analysis-card-header">
+                            <h3 class="analysis-title">${analysis.title}</h3>
+                            <span class="analysis-date">${date}</span>
+                        </div>
+                        <span class="analysis-mode">${analysis.modeName}</span>
+                        <div class="analysis-preview">${analysis.preview}</div>
+                        <div class="analysis-footer">
+                            <div class="analysis-status">
+                                <i class="fas fa-${analysis.status === 'completed' ? 'check-circle status-completed' : 'clock status-processing'}"></i>
+                                <span class="${analysis.status === 'completed' ? 'status-completed' : ''}">
+                                    ${analysis.status === 'completed' ? 'Завершён' : 'В обработке'}
+                                </span>
+                            </div>
+                            <span class="view-btn">
+                                <i class="fas fa-eye"></i> Просмотр
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        // Просмотр анализа
+        window.viewAnalysis = function(id) {
+            const analysis = analyses.find(a => a.id === id);
+            if (!analysis) return;
+
+            document.getElementById('modalTitle').textContent = analysis.title;
+            document.getElementById('modalMode').textContent = analysis.modeName;
+            document.getElementById('modalDate').textContent = new Date(analysis.date).toLocaleString('ru-RU');
+            
+            // Форматируем результат
+            let formattedResult = analysis.result
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+            
+            document.getElementById('modalContent').innerHTML = `
+                <div style="line-height: 1.8;">
+                    ${formattedResult}
+                </div>
+                ${analysis.file ? `
+                    <div style="margin-top: 30px; padding: 20px; background: var(--bg-light); border-radius: var(--radius-md);">
+                        <strong>Загруженный файл:</strong> ${analysis.file}
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('analysisModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        // Закрыть модальное окно
+        window.closeModal = function() {
+            document.getElementById('analysisModal').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        // Закрытие по клику вне
+        window.onclick = function(event) {
+            const modal = document.getElementById('analysisModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Выход
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

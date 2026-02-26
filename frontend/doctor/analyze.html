@@ -606,32 +606,79 @@
             // Показываем результат анализа
             const resultDiv = document.getElementById(`${currentMode}Results`);
             
-            if (data.analysis) {
+            if (data.analysis || data.result) {
+                const resultText = data.analysis || data.result || 'Анализ завершён';
+                
                 resultDiv.innerHTML = `
                     <div style="background: white; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md);">
                         <h3 style="color: var(--primary-dark); margin-bottom: 20px;">
                             <i class="fas fa-check-circle" style="color: #10b981;"></i> Результат анализа
                         </h3>
-                        <div style="line-height: 1.8; color: var(--text-primary);">
-                            ${data.analysis.replace(/\n/g, '<br>')}
+                        <div style="line-height: 1.8; color: var(--text-primary); white-space: pre-wrap;">
+                            ${resultText}
                         </div>
                         ${data.confidence ? `
                             <div style="margin-top: 20px; padding: 15px; background: rgba(37, 99, 235, 0.1); border-radius: var(--radius-md);">
                                 <strong>Уверенность AI:</strong> ${(data.confidence * 100).toFixed(1)}%
                             </div>
                         ` : ''}
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                            <a href="analysis-history.html" class="btn btn-primary" style="display: inline-block;">
+                                <i class="fas fa-history"></i> Смотреть историю анализов
+                            </a>
+                        </div>
                     </div>
                 `;
+                
+                // Сохраняем в localStorage
+                saveAnalysis(resultText);
             } else {
                 resultDiv.innerHTML = `
                     <div style="background: white; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md);">
                         <h3>Результат</h3>
                         <p>Анализ завершён. Детали будут доступны в личном кабинете.</p>
+                        <a href="analysis-history.html" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">
+                            <i class="fas fa-history"></i> Смотреть историю анализов
+                        </a>
                     </div>
                 `;
             }
             
             document.getElementById('resultsSection').classList.add('visible');
+        }
+
+        // Сохранение анализа в localStorage
+        function saveAnalysis(result) {
+            const modeNames = {
+                'interaction': 'Проверка совместимости',
+                'analogs': 'Поиск аналогов',
+                'treatment': 'Проверка тактики лечения'
+            };
+            
+            const analysis = {
+                id: Date.now(),
+                title: `Анализ: ${modeNames[currentMode] || 'Режим ' + currentMode}`,
+                mode: currentMode,
+                modeName: modeNames[currentMode] || currentMode,
+                date: new Date().toISOString(),
+                status: 'completed',
+                preview: result.substring(0, 200) + '...',
+                result: result,
+                file: uploadedFiles.length > 0 ? uploadedFiles[0].name : null
+            };
+            
+            // Получаем существующие
+            let analyses = [];
+            const stored = localStorage.getItem('analyses');
+            if (stored) {
+                analyses = JSON.parse(stored);
+            }
+            
+            // Добавляем новый
+            analyses.unshift(analysis);
+            
+            // Сохраняем (максимум 50 последних)
+            localStorage.setItem('analyses', JSON.stringify(analyses.slice(0, 50)));
         }
         
         // Выход
