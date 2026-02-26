@@ -612,6 +612,117 @@ def analyze():
         return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
 
+@app.route('/api/doctor/patients', methods=['GET'])
+def get_doctor_patients():
+    """Получение списка пациентов врача"""
+    try:
+        user_id = request.args.get('user_id')
+        
+        if not user_id:
+            # Получаем из сессии или заголовка
+            user_id = request.headers.get('X-User-Id')
+        
+        if not user_id:
+            return jsonify({'error': 'Не указан ID врача'}), 400
+        
+        # Находим врача
+        doctor = user_manager.users.get(user_id)
+        if not doctor or doctor.role != 'doctor':
+            return jsonify({'error': 'Врач не найден'}), 404
+        
+        # Получаем всех пациентов
+        patients = [u for u in user_manager.users.values() if u.role == 'patient']
+        
+        # Формируем ответ
+        patients_data = []
+        for patient in patients:
+            patients_data.append({
+                'id': patient.id,
+                'full_name': patient.full_name,
+                'email': patient.email,
+                'birth_date': patient.birth_date,
+                'phone': patient.phone,
+                'is_my_patient': getattr(patient, 'doctor_id', None) == user_id
+            })
+        
+        return jsonify({'patients': patients_data}), 200
+        
+    except Exception as e:
+        logger.error(f"Ошибка получения пациентов: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@app.route('/api/doctor/patients/assign', methods=['POST'])
+def assign_patient():
+    """Закрепление пациента за врачом"""
+    try:
+        data = request.json
+        doctor_id = data.get('doctor_id')
+        patient_id = data.get('patient_id')
+        
+        if not doctor_id or not patient_id:
+            return jsonify({'error': 'Не указаны ID'}), 400
+        
+        # Находим врача и пациента
+        doctor = user_manager.users.get(doctor_id)
+        patient = user_manager.users.get(patient_id)
+        
+        if not doctor or doctor.role != 'doctor':
+            return jsonify({'error': 'Врач не найден'}), 404
+        
+        if not patient or patient.role != 'patient':
+            return jsonify({'error': 'Пациент не найден'}), 404
+        
+        # Закрепляем пациента
+        patient.doctor_id = doctor_id
+        user_manager._save_users()
+        
+        logger.info(f"Пациент {patient_id} закреплён за врачом {doctor_id}")
+        
+        return jsonify({
+            'message': 'Пациент успешно закреплён',
+            'patient_id': patient_id,
+            'doctor_id': doctor_id
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Ошибка закрепления пациента: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@app.route('/api/doctor/patients/unassign', methods=['POST'])
+def unassign_patient():
+    """Открепление пациента от врача"""
+    try:
+        data = request.json
+        patient_id = data.get('patient_id')
+        
+        if not patient_id:
+            return jsonify({'error': 'Не указан ID пациента'}), 400
+        
+        # Находим пациента
+        patient = user_manager.users.get(patient_id)
+        
+        if not patient:
+            return jsonify({'error': 'Пациент не найден'}), 404
+        
+        # Открепляем
+        if hasattr(patient, 'doctor_id'):
+            patient.doctor_id = None
+            user_manager._save_users()
+        
+        logger.info(f"Пациент {patient_id} откреплён")
+        
+        return jsonify({
+            'message': 'Пациент откреплён',
+            'patient_id': patient_id
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Ошибка открепления пациента: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
 if __name__ == '__main__':
     print("=" * 50)
     print("OncoMind Backend Server")
