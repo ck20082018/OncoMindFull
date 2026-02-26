@@ -437,6 +437,7 @@
         </div>
     </footer>
 
+    <script src="../config.js"></script>
     <script>
         // Получаем параметр mode из URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -555,45 +556,82 @@
                 alert('Загрузите файлы для анализа');
                 return;
             }
-            
+
             // Показываем загрузку
             document.getElementById('loadingOverlay').style.display = 'flex';
-            
-            // Имитация загрузки (тут будет реальный API запрос)
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').style.display = 'none';
-                
-                // Показываем соответствующие результаты
-                document.querySelectorAll('#interactionResults, #analogsResults, #treatmentResults').forEach(el => {
-                    el.style.display = 'none';
-                });
-                
-                document.getElementById(`${currentMode}Results`).style.display = 'block';
-                document.getElementById('resultsSection').classList.add('visible');
-            }, 2000);
-            
-            // TODO: Здесь будет реальный API запрос
-            /*
+
+            // Реальный API запрос к AI серверу
             const formData = new FormData();
-            uploadedFiles.forEach(file => formData.append('files', file));
-            formData.append('mode', currentMode);
-            
-            if (currentMode === 'analogs') {
-                formData.append('activeSubstance', document.getElementById('activeSubstance').value);
-            }
-            
+            uploadedFiles.forEach(file => formData.append('file', file));
+            formData.append('mode', 'doctor');
+            formData.append('query', currentMode === 'analogs' 
+                ? `Найди аналоги для: ${document.getElementById('activeSubstance').value}` 
+                : currentMode === 'interaction' 
+                    ? 'Проверь совместимость препаратов' 
+                    : 'Проверь соответствие клиническим рекомендациям');
+
             try {
-                const response = await fetch('http://localhost:5000/api/doctor/analyze', {
+                // Отправляем на Flask backend (который перенаправит на AI)
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/analyze`, {
                     method: 'POST',
                     body: formData
                 });
-                
+
                 const data = await response.json();
-                displayResults(data);
+                
+                document.getElementById('loadingOverlay').style.display = 'none';
+
+                if (response.ok) {
+                    // Показываем результаты
+                    document.querySelectorAll('#interactionResults, #analogsResults, #treatmentResults').forEach(el => {
+                        el.style.display = 'none';
+                    });
+
+                    document.getElementById(`${currentMode}Results`).style.display = 'block';
+                    document.getElementById('resultsSection').classList.add('visible');
+                    
+                    // Отображаем результат
+                    displayResults(data);
+                } else {
+                    alert('Ошибка анализа: ' + (data.error || 'Неизвестная ошибка'));
+                }
             } catch (error) {
-                alert('Ошибка при анализе');
+                console.error('Ошибка:', error);
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert('Ошибка подключения к серверу анализа');
             }
-            */
+        }
+
+        function displayResults(data) {
+            // Показываем результат анализа
+            const resultDiv = document.getElementById(`${currentMode}Results`);
+            
+            if (data.analysis) {
+                resultDiv.innerHTML = `
+                    <div style="background: white; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md);">
+                        <h3 style="color: var(--primary-dark); margin-bottom: 20px;">
+                            <i class="fas fa-check-circle" style="color: #10b981;"></i> Результат анализа
+                        </h3>
+                        <div style="line-height: 1.8; color: var(--text-primary);">
+                            ${data.analysis.replace(/\n/g, '<br>')}
+                        </div>
+                        ${data.confidence ? `
+                            <div style="margin-top: 20px; padding: 15px; background: rgba(37, 99, 235, 0.1); border-radius: var(--radius-md);">
+                                <strong>Уверенность AI:</strong> ${(data.confidence * 100).toFixed(1)}%
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div style="background: white; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md);">
+                        <h3>Результат</h3>
+                        <p>Анализ завершён. Детали будут доступны в личном кабинете.</p>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('resultsSection').classList.add('visible');
         }
         
         // Выход
