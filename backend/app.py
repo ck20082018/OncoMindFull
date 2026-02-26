@@ -673,7 +673,9 @@ def assign_patient():
         if not patient or patient.role != 'patient':
             return jsonify({'error': 'Пациент не найден'}), 404
         
-        # Закрепляем пациента
+        # Закрепляем пациента (добавляем атрибут если нет)
+        if not hasattr(patient, 'doctor_id'):
+            patient.doctor_id = None
         patient.doctor_id = doctor_id
         user_manager._save_users()
         
