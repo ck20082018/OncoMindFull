@@ -335,7 +335,6 @@ h2::after {
     width: 160px;
     height: 160px;
     margin: 0 auto 24px;
-    border-radius: 50%;
     background: var(--gradient-main);
     display: flex;
     align-items: center;
@@ -345,6 +344,7 @@ h2::after {
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
+    clip-path: circle(50% at 50% 50%);
 }
 
 .team-photo img {
