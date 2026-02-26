@@ -244,14 +244,24 @@
         // Загрузка пациентов
         async function loadPatients() {
             try {
+                console.log('Загрузка пациентов для врача:', currentUser.id);
+                
                 const response = await fetch(`${API_CONFIG.BASE_URL}/api/doctor/patients?user_id=${currentUser.id}`);
+                console.log('Ответ сервера:', response.status);
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Данные:', data);
                     allPatients = data.patients || [];
                     renderPatients();
+                } else {
+                    const error = await response.json();
+                    console.error('Ошибка API:', error);
+                    alert('Ошибка загрузки пациентов: ' + error.error);
                 }
             } catch (error) {
                 console.error('Ошибка загрузки:', error);
+                alert('Ошибка подключения к серверу');
             }
         }
 
