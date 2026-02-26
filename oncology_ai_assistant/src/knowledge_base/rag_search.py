@@ -138,7 +138,7 @@ class RAGSearchEngine:
     
     def __init__(
         self,
-        embedding_model: str = "sentence-transformers/ruBert-large",
+        embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         chunk_size: int = 500,
         chunk_overlap: int = 50,
         index_dir: Optional[str] = None,
@@ -546,7 +546,7 @@ class RAGSearchEngine:
 
 def create_rag_engine(
     index_dir: Optional[str] = None,
-    embedding_model: str = "sentence-transformers/ruBert-large"
+    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 ) -> RAGSearchEngine:
     """
     Создать RAG движок.
@@ -567,7 +567,7 @@ def create_rag_engine(
 def index_clinical_guidelines(
     documents: List[Dict[str, Any]],
     index_dir: str,
-    embedding_model: str = "sentence-transformers/ruBert-large"
+    embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 ) -> RAGSearchEngine:
     """
     Проиндексировать клинические рекомендации.

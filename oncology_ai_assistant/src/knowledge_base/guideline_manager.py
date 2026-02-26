@@ -118,7 +118,7 @@ class GuidelineManager:
         self,
         data_dir: str = "knowledge_base_data/minzdrav",
         index_dir: str = "knowledge_base_data/index",
-        embedding_model: str = "sentence-transformers/ruBert-large",
+        embedding_model: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         auto_index: bool = True
     ):
         """
@@ -150,39 +150,98 @@ class GuidelineManager:
     ) -> int:
         """
         Загрузить локальные клинические рекомендации.
-        
+
         Args:
             file_pattern: Шаблон для поиска файлов.
-            
+
         Returns:
             Количество загруженных документов.
         """
         logger.info(f"Загрузка рекомендаций из {self.data_dir}")
-        
+
         if not self.data_dir.exists():
             logger.warning(f"Директория не найдена: {self.data_dir}")
             return 0
-        
-        # Ищем PDF файлы
-        pdf_files = list(self.data_dir.glob(file_pattern))
-        logger.info(f"Найдено {len(pdf_files)} PDF файлов")
-        
+
+        # Ищем PDF и HTML файлы
+        pdf_files = list(self.data_dir.glob("*.pdf"))
+        html_files = list(self.data_dir.glob("*.html"))
+        all_files = pdf_files + html_files
+        logger.info(f"Найдено {len(all_files)} файлов ({len(pdf_files)} PDF, {len(html_files)} HTML)")
+
         loaded_count = 0
-        for pdf_path in pdf_files:
+        for file_path in all_files:
             try:
-                doc = self._parse_guideline_pdf(pdf_path)
+                if file_path.suffix.lower() == '.html':
+                    doc = self._parse_guideline_html(file_path)
+                else:
+                    doc = self._parse_guideline_pdf(file_path)
                 if doc:
                     self.catalog.add(doc)
                     loaded_count += 1
             except Exception as e:
-                logger.error(f"Ошибка при загрузке {pdf_path}: {e}")
-        
+                logger.error(f"Ошибка при загрузке {file_path}: {e}")
+
         # Индексируем если включено
         if self.auto_index and loaded_count > 0:
             self._build_index()
-        
+
         logger.info(f"Загружено {loaded_count} рекомендаций")
         return loaded_count
+
+    def _parse_guideline_html(self, html_path: Path) -> Optional[GuidelineDocument]:
+        """
+        Распарсить HTML клинической рекомендации.
+
+        Args:
+            html_path: Путь к HTML.
+
+        Returns:
+            GuidelineDocument или None.
+        """
+        try:
+            with open(html_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Извлекаем заголовок из HTML
+            import re
+            title_match = re.search(r'<title>([^<]+)</title>', content)
+            title = title_match.group(1).strip() if title_match else html_path.stem
+            
+            # Извлекаем основной текст
+            body_match = re.search(r'<body[^>]*>(.*?)</body>', content, re.DOTALL)
+            body_text = body_match.group(1) if body_match else content
+            
+            # Удаляем HTML теги
+            from html import unescape
+            text = re.sub(r'<[^>]+>', '', body_text)
+            text = unescape(text)
+            
+            # Создаём ID из имени файла
+            file_id = html_path.stem
+            
+            # Пытаемся извлечь метаданные
+            disease_area = self._extract_disease_area(text[:1000])
+            version = self._extract_version(text)
+            
+            guideline = GuidelineDocument(
+                id=file_id,
+                title=title,
+                source="Минздрав РФ",
+                disease_area=disease_area,
+                version=version or "2026",
+                approval_date=None,
+                file_path=str(html_path),
+                content=text,
+                metadata={'format': 'html'}
+            )
+            
+            logger.info(f"Загружена рекомендация: {title}")
+            return guideline
+            
+        except Exception as e:
+            logger.error(f"Ошибка при загрузке HTML {html_path}: {e}")
+            return None
     
     def _parse_guideline_pdf(self, pdf_path: Path) -> Optional[GuidelineDocument]:
         """

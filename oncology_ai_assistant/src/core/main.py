@@ -9,6 +9,8 @@ MAIN.PY - Точка входа FastAPI приложения
 - Управления базой знаний
 =============================================================================
 """
+from dotenv import load_dotenv
+load_dotenv()
 
 import logging
 import os
@@ -24,7 +26,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from .pipeline import OncologyPipeline, PipelineBuilder, PipelineOutput
-from ..llm.yandex_client import YandexGPTConfig, load_config_from_yaml
+from ..llm.yandex_client_simple import YandexGPTConfig, LLMResponse
 from ..knowledge_base.guideline_manager import GuidelineManager
 from ..knowledge_base.guideline_updater import GuidelineUpdater
 from ..utils.logger import setup_logging
@@ -102,51 +104,46 @@ ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png', '.tiff', '.bmp', '.xls', 
 async def lifespan(app: FastAPI):
     """Инициализация и очистка приложения."""
     global pipeline, guideline_manager, guideline_updater
-    
+
     # Инициализация
     logger.info("Инициализация приложения...")
-    
+
     try:
         # Настройка логирования
         setup_logging()
-        
-        # Загрузка конфигурации
-        config_path = Path("config/yandex_cloud_config.yaml")
-        if config_path.exists():
-            yandex_config = load_config_from_yaml(str(config_path))
-        else:
-            # Используем переменные окружения
-            yandex_config = YandexGPTConfig(
-                folder_id=os.getenv('YC_FOLDER_ID', ''),
-                iam_token=os.getenv('YC_IAM_TOKEN'),
-                service_account_key_path=os.getenv('YC_SERVICE_ACCOUNT_KEY')
-            )
-        
+
+        # Загрузка конфигурации из .env
+        yandex_config = YandexGPTConfig(
+            folder_id=os.getenv('YC_FOLDER_ID', ''),
+            iam_token=os.getenv('YC_IAM_TOKEN'),
+            service_account_key_path=os.getenv('YC_SERVICE_ACCOUNT_KEY')
+        )
+
         # Создание пайплайна
         builder = PipelineBuilder()
         builder.with_yandex_config(yandex_config)
         builder.with_data_dir("knowledge_base_data/minzdrav")
         builder.with_temp_dir("temp")
         pipeline = builder.build()
-        
+
         # Менеджер рекомендаций
         guideline_manager = GuidelineManager(
             data_dir="knowledge_base_data/minzdrav",
             index_dir="knowledge_base_data/index"
         )
         guideline_manager.load_local_guidelines()
-        
+
         # Обновлятор рекомендаций
         guideline_updater = GuidelineUpdater(
             data_dir="knowledge_base_data/minzdrav"
         )
-        
+
         logger.info("Приложение успешно инициализировано")
-        
+
     except Exception as e:
         logger.error(f"Ошибка инициализации: {e}", exc_info=True)
         raise
-    
+
     yield
     
     # Очистка при завершении

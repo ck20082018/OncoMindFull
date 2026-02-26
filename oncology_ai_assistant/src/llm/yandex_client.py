@@ -24,6 +24,7 @@ from pathlib import Path
 
 import grpc
 import yaml
+import requests
 from tenacity import (
     retry,
     stop_after_attempt,
@@ -31,23 +32,14 @@ from tenacity import (
     retry_if_exception_type
 )
 
-# Импорты Yandex Cloud SDK
+# Импорты Yandex Cloud SDK (опционально)
 try:
     from yandexcloud import SDK
-    from yandex.cloud.ai.llm.v1.llm_service import LlmService
-    from yandex.cloud.ai.llm.v1.llm_service_pb2 import (
-        CompletionRequest,
-        CompletionResponse,
-    )
-    from yandex.cloud.ai.llm.v1.generation_pb2 import (
-        GenerationOptions,
-        TextGenerationOptions,
-    )
     YANDEX_SDK_AVAILABLE = True
 except ImportError:
     YANDEX_SDK_AVAILABLE = False
     logger = logging.getLogger(__name__)
-    logger.warning("Yandex Cloud SDK не установлен. Установите: pip install yandexcloud")
+    logger.warning("Yandex Cloud SDK не установлен. Используем requests.")
 
 
 logger = logging.getLogger(__name__)
@@ -71,7 +63,7 @@ class YandexGPTConfig:
         """Валидация конфигурации после инициализации."""
         if not self.folder_id:
             raise ValueError("folder_id обязателен для подключения к Yandex Cloud")
-        
+
         # Проверяем наличие хотя бы одного способа аутентификации
         auth_methods = [
             self.iam_token,
@@ -83,6 +75,42 @@ class YandexGPTConfig:
                 "Требуется хотя бы один способ аутентификации: "
                 "iam_token, service_account_key_path или api_key"
             )
+
+    def get_iam_token(self) -> str:
+        """Получить IAM токен."""
+        if self.iam_token:
+            return self.iam_token
+        
+        if self.service_account_key_path:
+            # Загрузка ключа и получение токена
+            with open(self.service_account_key_path, 'r') as f:
+                key_data = json.load(f)
+            
+            # Создание JWT
+            import jwt
+            now = int(time.time())
+            payload = {
+                'aud': 'https://iam.api.cloud.yandex.net/iam/v1/tokens',
+                'iss': key_data['id'],
+                'iat': now,
+                'exp': now + 3600
+            }
+            token = jwt.encode(
+                payload,
+                key_data['private_key'],
+                algorithm='PS256',
+                headers={'kid': key_data['id']}
+            )
+            
+            # Обмен JWT на IAM токен
+            response = requests.post(
+                'https://iam.api.cloud.yandex.net/iam/v1/tokens',
+                json={'jwt': token}
+            )
+            response.raise_for_status()
+            return response.json()['iamToken']
+        
+        raise ValueError("Не удалось получить IAM токен")
 
 
 @dataclass
