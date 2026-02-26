@@ -191,20 +191,23 @@ class OncologyPipeline:
     ) -> PipelineOutput:
         """
         Обработать файл и получить результат.
-        
+
         Args:
             file_path: Путь к файлу.
             mode: Режим ('doctor' или 'patient').
             query: Дополнительный запрос.
-            
+
         Returns:
             PipelineOutput.
         """
         start_time = time.time()
         file_path = Path(file_path)
-        
+
+        # Сохраняем mode в объекте для использования в других методах
+        self.mode = mode
+
         logger.info(f"Запуск пайплайна: {file_path}, режим={mode}")
-        
+
         output = PipelineOutput(
             success=False,
             mode=mode
