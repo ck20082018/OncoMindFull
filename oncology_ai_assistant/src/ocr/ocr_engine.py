@@ -126,7 +126,7 @@ class OCREngine:
         )
     
     @property
-    def reader(self) -> easyocr.Reader:
+    def reader(self):
         """Получить или создать Reader."""
         if self._reader is None:
             self._reader = easyocr.Reader(
