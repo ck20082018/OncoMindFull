@@ -254,7 +254,17 @@ class OncologyPipeline:
             
             # Этап 4: Формирование промпта
             stage_start = time.time()
-            system_prompt = get_system_prompt(mode)
+            
+            # Выбираем правильный промпт в зависимости от режима
+            if mode == 'interaction':
+                system_prompt = get_system_prompt('interaction')
+            elif mode == 'analogs':
+                system_prompt = get_system_prompt('analogs')
+            elif mode == 'treatment':
+                system_prompt = get_system_prompt('treatment')
+            else:
+                system_prompt = get_system_prompt(mode)
+            
             user_prompt = self._build_user_prompt(
                 text=anonymized_text,
                 rag_context=rag_results.get_formatted_context(),
