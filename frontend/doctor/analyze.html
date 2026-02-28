@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OncoMind — Анализ лечения</title>
-    
+
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -13,7 +13,7 @@
             max-width: 900px;
             margin: 0 auto;
         }
-        
+
         .mode-selector {
             display: flex;
             gap: 15px;
@@ -23,7 +23,7 @@
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-sm);
         }
-        
+
         .mode-btn {
             flex: 1;
             padding: 15px;
@@ -34,30 +34,36 @@
             transition: all 0.3s ease;
             text-align: center;
         }
-        
+
         .mode-btn.active {
             border-color: var(--primary-blue);
             background: rgba(37, 99, 235, 0.05);
         }
-        
+
+        .mode-btn:hover {
+            border-color: var(--primary-blue);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
         .mode-btn i {
             font-size: 24px;
             color: var(--primary-blue);
             margin-bottom: 10px;
             display: block;
         }
-        
+
         .mode-btn span {
             font-weight: 600;
             color: var(--text-dark);
         }
-        
+
         .mode-desc {
             font-size: 13px;
             color: var(--text-muted);
             margin-top: 8px;
+            display: block;
         }
-        
+
         .upload-section {
             background: white;
             border-radius: var(--radius-lg);
@@ -65,7 +71,7 @@
             box-shadow: var(--shadow-md);
             margin-bottom: 30px;
         }
-        
+
         .upload-area {
             border: 2px dashed #cbd5e1;
             border-radius: var(--radius-md);
@@ -76,32 +82,32 @@
             background: var(--bg-light);
             margin-bottom: 20px;
         }
-        
+
         .upload-area:hover {
             border-color: var(--primary-blue);
             background: rgba(37, 99, 235, 0.05);
         }
-        
+
         .upload-area i {
             font-size: 60px;
             color: var(--text-muted);
             margin-bottom: 20px;
         }
-        
+
         .upload-area p {
             font-size: 18px;
             color: var(--text-primary);
             margin-bottom: 10px;
         }
-        
+
         .upload-area small {
             color: var(--text-muted);
         }
-        
+
         .file-list {
             margin-top: 20px;
         }
-        
+
         .file-item {
             display: flex;
             align-items: center;
@@ -112,38 +118,63 @@
             border: 1px solid #e2e8f0;
             margin-bottom: 10px;
         }
-        
+
         .file-item i {
             color: var(--primary-blue);
             font-size: 20px;
         }
-        
+
         .file-name {
             flex: 1;
             font-weight: 500;
         }
-        
+
+        .file-size {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
         .file-remove {
             color: var(--text-muted);
             cursor: pointer;
             padding: 5px 10px;
             border-radius: var(--radius-sm);
             transition: all 0.3s ease;
+            background: none;
+            border: none;
+            font-size: 16px;
         }
-        
+
         .file-remove:hover {
             background: rgba(239, 68, 68, 0.1);
             color: #ef4444;
         }
-        
+
         .analyze-btn {
             width: 100%;
             padding: 18px;
             font-size: 18px;
             font-weight: 600;
             margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius-md);
+            background: var(--gradient-main);
+            color: white;
+            transition: all 0.3s ease;
         }
-        
+
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .results-section {
             background: white;
             border-radius: var(--radius-lg);
@@ -151,11 +182,11 @@
             box-shadow: var(--shadow-md);
             display: none;
         }
-        
+
         .results-section.visible {
             display: block;
         }
-        
+
         .error-highlight {
             background: rgba(239, 68, 68, 0.1);
             border-left: 4px solid #ef4444;
@@ -163,7 +194,7 @@
             border-radius: var(--radius-md);
             margin-bottom: 30px;
         }
-        
+
         .error-highlight h3 {
             color: #ef4444;
             margin-bottom: 15px;
@@ -171,7 +202,7 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .error-item {
             padding: 12px;
             background: white;
@@ -179,7 +210,7 @@
             margin-bottom: 10px;
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
-        
+
         .alternative-card {
             background: var(--bg-light);
             border-radius: var(--radius-md);
@@ -187,13 +218,13 @@
             margin-bottom: 20px;
             border: 1px solid #e2e8f0;
         }
-        
+
         .alternative-card h4 {
             color: var(--text-dark);
             margin-bottom: 15px;
             font-size: 18px;
         }
-        
+
         .reference-link {
             color: var(--primary-blue);
             text-decoration: none;
@@ -206,18 +237,20 @@
             border-radius: var(--radius-full);
             margin-right: 10px;
             margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
         }
-        
+
         .reference-link:hover {
             background: var(--primary-blue);
             color: white;
         }
-        
+
         .suggestions-list {
             list-style: none;
             padding: 0;
         }
-        
+
         .suggestions-list li {
             padding: 12px 16px;
             background: white;
@@ -227,11 +260,11 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .suggestions-list li i {
             color: var(--primary-blue);
         }
-        
+
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -245,20 +278,50 @@
             z-index: 9999;
             display: none;
         }
-        
+
         .loading-spinner {
             text-align: center;
         }
-        
+
         .loading-spinner i {
             font-size: 60px;
             color: var(--primary-blue);
             margin-bottom: 20px;
         }
-        
+
         .loading-spinner p {
             font-size: 18px;
             color: var(--text-dark);
+        }
+
+        /* Сообщение об ошибке */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 15px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        /* Сообщение об успехе */
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: 15px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.visible {
+            display: block;
         }
     </style>
 </head>
@@ -286,26 +349,30 @@
     <section>
         <div class="container analyze-container">
             <h1 style="text-align: center; margin-bottom: 20px;">Анализ лечения</h1>
-            
+
             <!-- Выбор режима -->
             <div class="mode-selector" id="modeSelector">
-                <div class="mode-btn active" data-mode="interaction" onclick="setMode('interaction')">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Проверка совместимости</span>
-                    <div class="mode-desc">Анализ взаимодействия препаратов</div>
-                </div>
-                <div class="mode-btn" data-mode="analogs" onclick="setMode('analogs')">
-                    <i class="fas fa-pills"></i>
-                    <span>Поиск аналогов</span>
-                    <div class="mode-desc">Поиск по активному веществу</div>
-                </div>
-                <div class="mode-btn" data-mode="treatment" onclick="setMode('treatment')">
+                <div class="mode-btn active" data-mode="treatment">
                     <i class="fas fa-stethoscope"></i>
                     <span>Проверка тактики лечения</span>
-                    <div class="mode-desc">Сравнение с рекомендациями</div>
+                    <span class="mode-desc">Сравнение с рекомендациями</span>
+                </div>
+                <div class="mode-btn" data-mode="interaction">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Проверка совместимости</span>
+                    <span class="mode-desc">Анализ взаимодействия препаратов</span>
+                </div>
+                <div class="mode-btn" data-mode="analogs">
+                    <i class="fas fa-pills"></i>
+                    <span>Поиск аналогов</span>
+                    <span class="mode-desc">Поиск по активному веществу</span>
                 </div>
             </div>
-            
+
+            <!-- Сообщение об ошибке -->
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
             <!-- Форма загрузки -->
             <div class="upload-section">
                 <div id="dropzone" class="upload-area">
@@ -314,100 +381,34 @@
                     <small>Поддерживаемые форматы: .pdf, .xlsx, .txt, .jpg, .png</small>
                     <input type="file" id="fileInput" name="files" multiple accept=".pdf,.xlsx,.txt,.jpg,.jpeg,.png" style="display: none;">
                 </div>
-                
+
                 <div class="file-list" id="fileList"></div>
-                
+
                 <div id="activeSubstanceField" style="display: none; margin-top: 20px;">
                     <label for="activeSubstance" style="font-weight: 600; display: block; margin-bottom: 10px;">Введите активное вещество:</label>
                     <input type="text" id="activeSubstance" placeholder="Например: паклитаксел" style="width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: var(--radius-sm); font-size: 15px;">
                 </div>
-                
-                <button class="btn btn-primary analyze-btn" onclick="startAnalysis()">
+
+                <button class="btn btn-primary analyze-btn" id="analyzeBtn">
                     <i class="fas fa-play"></i> Запустить анализ
                 </button>
             </div>
-            
+
             <!-- Результаты анализа -->
             <div class="results-section" id="resultsSection">
                 <div id="interactionResults" style="display: none;">
                     <h2 style="margin-bottom: 20px;">Результаты проверки совместимости</h2>
-                    <div class="error-highlight">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Обнаружены конфликты:</h3>
-                        <div class="error-item">
-                            <strong>Доксорубицин + Трастузумаб</strong> - повышенный риск кардиотоксичности
-                        </div>
-                        <div class="error-item">
-                            <strong>Цисплатин + Гентамицин</strong> - усиление нефротоксичности
-                        </div>
-                    </div>
-                    <h3>Безопасные комбинации:</h3>
-                    <div class="alternative-card">
-                        <p>Доксорубицин + Декстразоксан (кардиопротектор)</p>
-                    </div>
+                    <div id="interactionContent"></div>
                 </div>
-                
+
                 <div id="analogsResults" style="display: none;">
-                    <h2 style="margin-bottom: 20px;">Аналоги паклитаксела</h2>
-                    <div class="alternative-card">
-                        <h4>Паклитаксел-Тева</h4>
-                        <p><strong>Производитель:</strong> Тева, Израиль</p>
-                        <p><strong>Цена:</strong> ≈ 5 400 руб/флакон</p>
-                        <a href="#" class="reference-link">Инструкция</a>
-                        <a href="#" class="reference-link">Зарегистрирован в РФ</a>
-                    </div>
-                    <div class="alternative-card">
-                        <h4>Таксол</h4>
-                        <p><strong>Производитель:</strong> BMS, США</p>
-                        <p><strong>Цена:</strong> ≈ 8 200 руб/флакон</p>
-                        <a href="#" class="reference-link">Инструкция</a>
-                        <a href="#" class="reference-link">Зарегистрирован в РФ</a>
-                    </div>
-                    <div class="alternative-card">
-                        <h4>Паклитаксел-Лэнс</h4>
-                        <p><strong>Производитель:</strong> Лэнс-Фарм, Россия</p>
-                        <p><strong>Цена:</strong> ≈ 3 800 руб/флакон</p>
-                        <a href="#" class="reference-link">Инструкция</a>
-                        <a href="#" class="reference-link">Зарегистрирован в РФ</a>
-                    </div>
+                    <h2 style="margin-bottom: 20px;">Аналоги препарата</h2>
+                    <div id="analogsContent"></div>
                 </div>
-                
+
                 <div id="treatmentResults" style="display: none;">
                     <h2 style="margin-bottom: 20px;">Анализ тактики лечения</h2>
-                    <div class="error-highlight">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Ошибки в назначениях:</h3>
-                        <div class="error-item">
-                            <strong>Дозировка паклитаксела</strong> - 80 мг/м² вместо рекомендованных 175 мг/м²
-                        </div>
-                        <div class="error-item">
-                            <strong>Отсутствует кардиопротекция</strong> - при применении антрациклинов
-                        </div>
-                    </div>
-                    
-                    <h3>Альтернативные тактики:</h3>
-                    <div class="alternative-card">
-                        <h4>Схема AC-T (рекомендована Минздравом РФ)</h4>
-                        <p>Доксорубицин 60 мг/м² + Циклофосфамид 600 мг/м² каждые 2-3 недели × 4 цикла, затем Паклитаксел 80 мг/м² еженедельно × 12 недель</p>
-                        <div>
-                            <a href="#" class="reference-link">Минздрав РФ, п.4.2.1</a>
-                            <a href="#" class="reference-link">NCCN, Breast Cancer, v.3.2025</a>
-                        </div>
-                    </div>
-                    
-                    <div class="alternative-card">
-                        <h4>Схема TC (при противопоказаниях к антрациклинам)</h4>
-                        <p>Доцетаксел 75 мг/м² + Циклофосфамид 600 мг/м² каждые 3 недели × 4-6 циклов</p>
-                        <div>
-                            <a href="#" class="reference-link">Минздрав РФ, п.4.2.3</a>
-                            <a href="#" class="reference-link">ESMO, Early Breast Cancer, 2025</a>
-                        </div>
-                    </div>
-                    
-                    <h3>Рекомендовано дообследование:</h3>
-                    <ul class="suggestions-list">
-                        <li><i class="fas fa-heart"></i> Эхокардиография (оценка фракции выброса ЛЖ)</li>
-                        <li><i class="fas fa-dna"></i> Тестирование на мутации BRCA1/2</li>
-                        <li><i class="fas fa-flask"></i> Определение уровня HER2 методом FISH</li>
-                    </ul>
+                    <div id="treatmentContent"></div>
                 </div>
             </div>
         </div>
@@ -417,7 +418,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner">
             <i class="fas fa-spinner fa-spin"></i>
-            <p>Анализ данных...</p>
+            <p id="loadingText">Анализ данных...</p>
         </div>
     </div>
 
@@ -437,39 +438,61 @@
         </div>
     </footer>
 
+    <!-- Подключаем скрипты -->
     <script src="../config.js"></script>
+    <script src="../script.js"></script>
+    
+    <!-- Основной скрипт страницы -->
     <script>
-        // Получаем параметр mode из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const initialMode = urlParams.get('mode') || 'treatment';
-        
-        let currentMode = initialMode;
+        // Глобальные переменные
+        let currentMode = 'treatment';
         let uploadedFiles = [];
-        
+
+        // Ждём загрузки DOM
         document.addEventListener('DOMContentLoaded', function() {
-            const user = JSON.parse(localStorage.getItem('user'));
+            console.log('[Analyze] DOM загружен');
+            
+            // Проверка авторизации
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
             if (!user || user.role !== 'doctor') {
+                console.log('[Analyze] Пользователь не авторизован, редирект...');
                 window.location.href = '../login.html';
                 return;
             }
 
-            // Получаем режим из URL параметра
+            console.log('[Analyze] Пользователь авторизован:', user.email);
+
+            // Инициализация
+            initModeSelector();
+            initDragDrop();
+            initAnalyzeButton();
+            initLogout();
+
+            // Получаем режим из URL если есть
             const urlParams = new URLSearchParams(window.location.search);
             const modeFromUrl = urlParams.get('mode');
-            
-            // Если режим указан в URL - выбираем его
             if (modeFromUrl && ['interaction', 'analogs', 'treatment'].includes(modeFromUrl)) {
                 setMode(modeFromUrl);
-            } else {
-                setMode(initialMode);
             }
-            
-            initDragDrop();
         });
-        
-        function setMode(mode) {
-            currentMode = mode;
+
+        // Инициализация переключателя режимов
+        function initModeSelector() {
+            const modeBtns = document.querySelectorAll('.mode-btn');
             
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const mode = this.dataset.mode;
+                    setMode(mode);
+                });
+            });
+        }
+
+        // Установка режима
+        function setMode(mode) {
+            console.log('[Analyze] Установка режима:', mode);
+            currentMode = mode;
+
             // Обновляем активную кнопку
             document.querySelectorAll('.mode-btn').forEach(btn => {
                 if (btn.dataset.mode === mode) {
@@ -478,7 +501,7 @@
                     btn.classList.remove('active');
                 }
             });
-            
+
             // Показываем/скрываем поле для активного вещества
             const substanceField = document.getElementById('activeSubstanceField');
             if (mode === 'analogs') {
@@ -486,317 +509,299 @@
             } else {
                 substanceField.style.display = 'none';
             }
+
+            // Скрываем результаты при смене режима
+            document.getElementById('resultsSection').classList.remove('visible');
+            document.querySelectorAll('#interactionResults, #analogsResults, #treatmentResults').forEach(el => {
+                el.style.display = 'none';
+            });
         }
-        
+
+        // Инициализация drag-and-drop
         function initDragDrop() {
             const dropzone = document.getElementById('dropzone');
             const fileInput = document.getElementById('fileInput');
-            
+
             dropzone.addEventListener('click', () => fileInput.click());
-            
+
             dropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropzone.classList.add('dragover');
             });
-            
+
             dropzone.addEventListener('dragleave', () => {
                 dropzone.classList.remove('dragover');
             });
-            
+
             dropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
                 dropzone.classList.remove('dragover');
                 handleFiles(e.dataTransfer.files);
             });
-            
+
             fileInput.addEventListener('change', (e) => {
                 handleFiles(e.target.files);
             });
         }
-        
+
+        // Обработка файлов
         function handleFiles(files) {
+            const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/plain', 'image/jpeg', 'image/png', 'image/jpg'];
+            const allowedExtensions = ['.pdf', '.xlsx', '.txt', '.jpg', '.jpeg', '.png'];
+            
             for (let file of files) {
-                uploadedFiles.push(file);
+                const extension = '.' + file.name.split('.').pop().toLowerCase();
+                
+                if (allowedTypes.includes(file.type) || allowedExtensions.includes(extension)) {
+                    uploadedFiles.push(file);
+                } else {
+                    showError(`Файл "${file.name}" имеет неподдерживаемый формат`);
+                }
             }
             updateFileList();
         }
-        
+
+        // Обновление списка файлов
         function updateFileList() {
             const list = document.getElementById('fileList');
-            let html = '';
             
+            if (uploadedFiles.length === 0) {
+                list.innerHTML = '';
+                return;
+            }
+            
+            let html = '<div style="margin-bottom: 10px; font-weight: 600; color: var(--text-dark);">Загруженные файлы:</div>';
+
             uploadedFiles.forEach((file, index) => {
-                const size = (file.size / 1024).toFixed(1);
+                const size = formatFileSize(file.size);
+                const icon = getFileIcon(file.name);
+                
                 html += `
                     <div class="file-item">
-                        <i class="fas fa-file-${getFileIcon(file.name)}"></i>
-                        <span class="file-name">${file.name}</span>
-                        <span class="file-size">${size} KB</span>
-                        <span class="file-remove" onclick="removeFile(${index})">
+                        <i class="fas fa-file-${icon}"></i>
+                        <span class="file-name">${OncoMindUtils ? OncoMindUtils.escapeHtml(file.name) : file.name}</span>
+                        <span class="file-size">${size}</span>
+                        <button type="button" class="file-remove" onclick="removeFile(${index})">
                             <i class="fas fa-times"></i>
-                        </span>
+                        </button>
                     </div>
                 `;
             });
-            
+
             list.innerHTML = html;
         }
-        
+
+        // Форматирование размера файла
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' Б';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' КБ';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' МБ';
+        }
+
+        // Иконка файла
         function getFileIcon(filename) {
             const ext = filename.split('.').pop().toLowerCase();
             if (ext === 'pdf') return 'pdf';
             if (ext === 'xlsx') return 'excel';
+            if (ext === 'docx') return 'word';
             if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') return 'image';
             return 'alt';
         }
-        
+
+        // Удаление файла
         window.removeFile = function(index) {
             uploadedFiles.splice(index, 1);
             updateFileList();
         };
-        
+
+        // Инициализация кнопки анализа
+        function initAnalyzeButton() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            analyzeBtn.addEventListener('click', function() {
+                startAnalysis();
+            });
+        }
+
+        // Начало анализа
         async function startAnalysis() {
+            console.log('[Analyze] Запуск анализа, режим:', currentMode);
+            
+            // Скрываем предыдущие сообщения
+            hideMessages();
+
+            // Проверка для режима analogs
             if (currentMode === 'analogs') {
-                const substance = document.getElementById('activeSubstance').value;
+                const substance = document.getElementById('activeSubstance').value.trim();
                 if (!substance) {
-                    alert('Введите активное вещество');
+                    showError('Введите активное вещество');
                     return;
                 }
-            } else if (uploadedFiles.length === 0) {
-                alert('Загрузите файлы для анализа');
+            } 
+            // Проверка файлов для остальных режимов
+            else if (uploadedFiles.length === 0) {
+                showError('Загрузите файлы для анализа');
                 return;
             }
 
             // Показываем загрузку
-            document.getElementById('loadingOverlay').style.display = 'flex';
+            showLoading(true);
 
-            // Реальный API запрос к AI серверу
+            // Подготовка данных
             const formData = new FormData();
             uploadedFiles.forEach(file => formData.append('file', file));
             formData.append('mode', 'doctor');
-            formData.append('query', currentMode === 'analogs' 
-                ? `Найди аналоги для: ${document.getElementById('activeSubstance').value}` 
-                : currentMode === 'interaction' 
-                    ? 'Проверь совместимость препаратов' 
-                    : 'Проверь соответствие клиническим рекомендациям');
+            
+            let query = '';
+            if (currentMode === 'analogs') {
+                query = `Найди аналоги для: ${document.getElementById('activeSubstance').value}`;
+            } else if (currentMode === 'interaction') {
+                query = 'Проверь совместимость препаратов';
+            } else {
+                query = 'Проверь соответствие клиническим рекомендациям';
+            }
+            formData.append('query', query);
+
+            console.log('[Analyze] Отправка запроса на API_CONFIG.BASE_URL:', API_CONFIG.BASE_URL);
 
             try {
-                console.log('Отправка запроса на анализ...', formData);
-                
-                // Отправляем на Flask backend (который перенаправит на AI)
                 const response = await fetch(`${API_CONFIG.BASE_URL}/api/analyze`, {
                     method: 'POST',
                     body: formData
                 });
 
                 const data = await response.json();
-                console.log('Ответ сервера:', data);
-                
-                document.getElementById('loadingOverlay').style.display = 'none';
+                console.log('[Analyze] Ответ сервера:', data);
+
+                showLoading(false);
 
                 if (response.ok) {
-                    // Показываем результаты
-                    document.querySelectorAll('#interactionResults, #analogsResults, #treatmentResults').forEach(el => {
-                        el.style.display = 'none';
-                    });
-
-                    document.getElementById(`${currentMode}Results`).style.display = 'block';
-                    document.getElementById('resultsSection').classList.add('visible');
-                    
-                    // Отображаем результат
+                    showSuccess('Анализ успешно завершён');
                     displayResults(data);
                 } else {
-                    alert('Ошибка анализа: ' + (data.error || data.details || 'Неизвестная ошибка'));
+                    showError('Ошибка анализа: ' + (data.error || data.details || 'Неизвестная ошибка'));
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
-                document.getElementById('loadingOverlay').style.display = 'none';
-                alert('Ошибка подключения к серверу анализа');
+                console.error('[Analyze] Ошибка:', error);
+                showLoading(false);
+                showError('Ошибка подключения к серверу. Убедитесь, что сервер запущен.');
             }
         }
 
+        // Отображение результатов
         function displayResults(data) {
-            console.log('Отображение результата:', data);
+            console.log('[Analyze] Отображение результатов:', data);
 
-            // Показываем результат анализа
+            // Скрываем все результаты
+            document.querySelectorAll('#interactionResults, #analogsResults, #treatmentResults').forEach(el => {
+                el.style.display = 'none';
+            });
+
+            // Показываем нужный результат
             const resultDiv = document.getElementById(`${currentMode}Results`);
-
-            // Пытаемся извлечь результат из разных форматов
-            let resultContent = '';
-            let resultTitle = 'Результат анализа';
-
-            // Если пришёл структурированный ответ от backend
-            if (data.success && data.data) {
-                const d = data.data;
-                
-                // Форматируем красивый ответ
-                resultContent = formatStructuredResponse(d);
-                resultTitle = getResultTitle(data.mode, d.verdict);
-            }
-            // Если пришёл текстовый ответ
-            else if (typeof data === 'string') {
-                resultContent = `<div style="line-height: 1.8; white-space: pre-wrap;">${data}</div>`;
-            }
-            // Если пришёл JSON
-            else if (data.analysis || data.result || data.text) {
-                const text = data.analysis || data.result || data.text;
-                resultContent = `<div style="line-height: 1.8; white-space: pre-wrap;">${text}</div>`;
-            }
-            // Если пришёл details
-            else if (data.details) {
-                try {
-                    const details = typeof data.details === 'string' ? JSON.parse(data.details) : data.details;
-                    resultContent = formatStructuredResponse(details);
-                } catch (e) {
-                    resultContent = `<pre style="white-space: pre-wrap;">${JSON.stringify(data.details, null, 2)}</pre>`;
-                }
-            }
-            // Если ничего не подошло
-            else {
-                resultContent = `<pre style="white-space: pre-wrap;">${JSON.stringify(data, null, 2)}</pre>`;
-            }
-
-            if (resultContent) {
-                resultDiv.innerHTML = `
-                    <div style="background: white; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md);">
-                        <h3 style="color: var(--primary-dark); margin-bottom: 20px;">
-                            <i class="fas fa-check-circle" style="color: #10b981;"></i> ${resultTitle}
-                        </h3>
-                        <div style="line-height: 1.8; color: var(--text-primary);">
-                            ${resultContent}
-                        </div>
-                        ${data.data && data.data.disclaimer ? `
-                            <div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: var(--radius-md);">
-                                <p style="color: #92400e; font-size: 14px; margin: 0;">
-                                    <i class="fas fa-exclamation-triangle"></i> ${data.data.disclaimer}
-                                </p>
-                            </div>
-                        ` : ''}
-                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-                            <a href="analysis-history.html" class="btn btn-primary" style="display: inline-block;">
-                                <i class="fas fa-history"></i> Смотреть историю анализов
-                            </a>
-                        </div>
-                    </div>
-                `;
-                
-                // Прокрутка к результатам
-                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
-            document.getElementById('resultsSection').classList.add('visible');
-        }
-
-        // Вспомогательные функции
-        function formatStructuredResponse(data) {
-            if (!data) return '';
+            const contentDiv = document.getElementById(`${currentMode}Content`);
             
+            resultDiv.style.display = 'block';
+            document.getElementById('resultsSection').classList.add('visible');
+
+            // Формируем контент
             let html = '';
-            
-            // Verdict
-            if (data.verdict) {
-                const verdicts = {
-                    'соответствует': '✅ Соответствует',
-                    'частично_соответствует': '⚠️ Частично соответствует',
-                    'не_соответствует': '❌ Не соответствует'
-                };
-                html += `<div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.02); border-left: 4px solid #2563eb; border-radius: var(--radius-md);">
-                    <strong>Вердикт:</strong> ${verdicts[data.verdict] || data.verdict}
-                    ${data.confidence_score ? `<span style="margin-left: 15px; color: var(--text-muted);">(Уверенность: ${(data.confidence_score * 100).toFixed(1)}%)</span>` : ''}
-                </div>`;
-            }
-            
-            // Summary
-            if (data.summary) {
-                html += `<p style="background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: var(--radius-md); margin-bottom: 20px;">${data.summary}</p>`;
-            }
-            
-            // Disclaimer
-            if (data.disclaimer) {
-                html += `<div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: var(--radius-md);">
-                    <p style="color: #92400e; font-size: 14px; margin: 0;">
-                        <i class="fas fa-exclamation-triangle"></i> ${data.disclaimer}
-                    </p>
-                </div>`;
-            }
-            
-            return html;
-        }
 
-        function getResultTitle(mode, verdict) {
-            const titles = {
-                'interaction': 'Проверка совместимости',
-                'analogs': 'Поиск аналогов',
-                'treatment': 'Проверка тактики лечения',
-                'doctor': 'Анализ лечения'
-            };
-            return titles[mode] || 'Результат анализа';
-        }
-                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-                            <a href="analysis-history.html" class="btn btn-primary" style="display: inline-block;">
-                                <i class="fas fa-history"></i> Смотреть историю анализов
-                            </a>
-                        </div>
-                    </div>
-                `;
-                
-                // Сохраняем в localStorage
-                saveAnalysis(resultText);
+            if (data.success && data.data) {
+                html = formatStructuredResponse(data.data);
+            } else if (data.text) {
+                html = `<div style="line-height: 1.8; white-space: pre-wrap;">${OncoMindUtils ? OncoMindUtils.escapeHtml(data.text) : data.text}</div>`;
+            } else if (data.details) {
+                html = `<div style="line-height: 1.8; white-space: pre-wrap;">${OncoMindUtils ? OncoMindUtils.escapeHtml(typeof data.details === 'string' ? data.details : JSON.stringify(data.details, null, 2)) : data.details}</div>`;
             } else {
-                resultDiv.innerHTML = `
-                    <div style="background: white; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md);">
-                        <h3>Результат</h3>
-                        <p>Анализ завершён. Детали будут доступны в личном кабинете.</p>
-                        <a href="analysis-history.html" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">
-                            <i class="fas fa-history"></i> Смотреть историю анализов
-                        </a>
-                    </div>
-                `;
+                html = `<pre style="white-space: pre-wrap; overflow-x: auto;">${JSON.stringify(data, null, 2)}</pre>`;
             }
-            
-            document.getElementById('resultsSection').classList.add('visible');
+
+            contentDiv.innerHTML = html;
+
+            // Прокрутка к результатам
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Сохранение анализа в localStorage
-        function saveAnalysis(result) {
-            const modeNames = {
-                'interaction': 'Проверка совместимости',
-                'analogs': 'Поиск аналогов',
-                'treatment': 'Проверка тактики лечения'
-            };
-            
-            const analysis = {
-                id: Date.now(),
-                title: `Анализ: ${modeNames[currentMode] || 'Режим ' + currentMode}`,
-                mode: currentMode,
-                modeName: modeNames[currentMode] || currentMode,
-                date: new Date().toISOString(),
-                status: 'completed',
-                preview: result.substring(0, 200) + '...',
-                result: result,
-                file: uploadedFiles.length > 0 ? uploadedFiles[0].name : null
-            };
-            
-            // Получаем существующие
-            let analyses = [];
-            const stored = localStorage.getItem('analyses');
-            if (stored) {
-                analyses = JSON.parse(stored);
+        // Форматирование структурированного ответа
+        function formatStructuredResponse(data) {
+            let html = '';
+
+            if (data.verdict) {
+                const verdictColor = data.verdict.toLowerCase().includes('рекомендовано') || data.verdict.toLowerCase().includes('безопасно') ? '#10b981' : '#ef4444';
+                html += `<div style="font-size: 18px; font-weight: 600; color: ${verdictColor}; margin-bottom: 20px; padding: 15px; background: ${verdictColor === '#10b981' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; border-radius: var(--radius-md);">
+                    <i class="fas ${verdictColor === '#10b981' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> 
+                    ${OncoMindUtils ? OncoMindUtils.escapeHtml(data.verdict) : data.verdict}
+                </div>`;
             }
-            
-            // Добавляем новый
-            analyses.unshift(analysis);
-            
-            // Сохраняем (максимум 50 последних)
-            localStorage.setItem('analyses', JSON.stringify(analyses.slice(0, 50)));
+
+            if (data.analysis) {
+                html += `<div style="margin-bottom: 20px;"><strong>Анализ:</strong><div style="line-height: 1.8; margin-top: 10px;">${OncoMindUtils ? OncoMindUtils.escapeHtml(data.analysis) : data.analysis}</div></div>`;
+            }
+
+            if (data.recommendations) {
+                html += `<div style="margin-bottom: 20px;"><strong>Рекомендации:</strong><ul style="line-height: 1.8; margin-top: 10px;">`;
+                const recs = Array.isArray(data.recommendations) ? data.recommendations : [data.recommendations];
+                recs.forEach(rec => {
+                    html += `<li>${OncoMindUtils ? OncoMindUtils.escapeHtml(rec) : rec}</li>`;
+                });
+                html += `</ul></div>`;
+            }
+
+            if (data.disclaimer) {
+                html += `<div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: var(--radius-md); font-size: 14px;">
+                    <i class="fas fa-info-circle"></i> ${OncoMindUtils ? OncoMindUtils.escapeHtml(data.disclaimer) : data.disclaimer}
+                </div>`;
+            }
+
+            return html || '<p>Нет данных для отображения</p>';
         }
-        
-        // Выход
-        document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.removeItem('user');
-            window.location.href = '../index.html';
-        });
+
+        // Показ ошибки
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('visible');
+        }
+
+        // Показ успеха
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.classList.add('visible');
+        }
+
+        // Скрытие сообщений
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('visible');
+            document.getElementById('successMessage').classList.remove('visible');
+        }
+
+        // Показ загрузки
+        function showLoading(show) {
+            const overlay = document.getElementById('loadingOverlay');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            if (show) {
+                overlay.style.display = 'flex';
+                analyzeBtn.disabled = true;
+            } else {
+                overlay.style.display = 'none';
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        // Инициализация выхода
+        function initLogout() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    OncoMindUtils ? OncoMindUtils.clearUserData() : localStorage.clear();
+                    window.location.href = '../login.html';
+                });
+            }
+        }
     </script>
 </body>
 </html>
