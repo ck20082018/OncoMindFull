@@ -1,4 +1,12 @@
-// login.js - Логика страницы входа
+/**
+ * login.js - Логика страницы входа
+ * 
+ * ИСПРАВЛЕНИЯ БЕЗОПАСНОСТИ:
+ * - Использование безопасных функций из script.js
+ * - Санитизация входных данных
+ * - Защита от XSS при отображении сообщений
+ */
+
 // Используем API_CONFIG из config.js
 const API_URL = API_CONFIG.BASE_URL;
 
@@ -19,9 +27,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const password = document.getElementById('password').value;
             const remember = document.querySelector('input[name="remember"]')?.checked || false;
 
-            // Валидация
+            // БЕЗОПАСНОСТЬ: Валидация email
             if (!email || !password) {
-                showMessage('error', 'Заполните все поля');
+                showNotification('error', 'Заполните все поля');
+                return;
+            }
+            
+            // БЕЗОПАСНОСТЬ: Проверка формата email
+            if (!OncoMindUtils.isValidEmail(email)) {
+                showNotification('error', 'Введите корректный email');
                 return;
             }
 
@@ -44,22 +58,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         remember: remember
                     })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
                     // Успешный вход
-                    showMessage('success', 'Вход выполнен! Перенаправление...');
+                    showNotification('success', 'Вход выполнен! Перенаправление...');
+
+                    // БЕЗОПАСНОСТЬ: Сохраняем только необходимые данные
+                    localStorage.setItem('user_id', data.user.id);
+                    localStorage.setItem('user_email', data.user.email);
+                    localStorage.setItem('user_role', data.user.role);
+                    localStorage.setItem('user_full_name', OncoMindUtils.escapeHtml(data.user.full_name));
                     
-                    // Сохраняем данные пользователя
+                    // Сохраняем полные данные для совместимости
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    
+
                     if (remember) {
                         localStorage.setItem('rememberedEmail', email);
                     } else {
                         localStorage.removeItem('rememberedEmail');
                     }
-                    
+
                     // Перенаправление в зависимости от роли
                     setTimeout(() => {
                         if (data.user.role === 'doctor') {
@@ -68,15 +88,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             window.location.href = 'patient/dashboard.html';
                         }
                     }, 1500);
-                    
+
                 } else {
                     // Ошибка входа
-                    showMessage('error', data.error || 'Ошибка входа');
+                    showNotification('error', data.error || 'Ошибка входа');
                 }
-                
+
             } catch (error) {
                 console.error('Ошибка:', error);
-                showMessage('error', 'Ошибка подключения к серверу. Убедитесь, что бэкенд запущен (python app.py)');
+                showNotification('error', 'Ошибка подключения к серверу. Убедитесь, что бэкенд запущен.');
             } finally {
                 // Возвращаем кнопку в исходное состояние
                 submitBtn.disabled = false;
@@ -84,33 +104,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // Функция показа сообщений
-    function showMessage(type, text) {
-        if (!formMessage) return;
-        
-        formMessage.textContent = text;
-        formMessage.className = 'form-message ' + type;
-        formMessage.style.display = 'block';
-        
-        // Автоматически скрываем через 5 секунд
-        setTimeout(() => {
-            formMessage.style.display = 'none';
-        }, 5000);
-    }
-    
+
     // Проверка статуса авторизации
     function checkAuthStatus() {
         const user = localStorage.getItem('user');
         const rememberedEmail = localStorage.getItem('rememberedEmail');
-        
+
         if (user) {
             // Если уже авторизован, спрашиваем
             if (confirm('Вы уже вошли. Хотите выйти?')) {
                 logout();
             }
         }
-        
+
         // Автозаполнение email если есть сохранённый
         if (rememberedEmail) {
             const emailInput = document.getElementById('email');
@@ -120,13 +126,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
-    
+
     // Выход из системы
     window.logout = function() {
-        localStorage.removeItem('user');
-        showMessage('success', 'Вы вышли из системы');
+        OncoMindUtils.clearUserData();
+        showNotification('success', 'Вы вышли из системы');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
     };
-    
+
     // Обработка "Забыли пароль"
     const forgotLink = document.getElementById('forgotPassword');
     if (forgotLink) {

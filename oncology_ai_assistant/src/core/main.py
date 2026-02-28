@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Any
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, Form
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -175,9 +175,15 @@ app = FastAPI(
 )
 
 # CORS middleware
+# ИСПРАВЛЕНИЕ: Ограничиваем CORS для продакшена
+ALLOWED_ORIGINS = os.getenv(
+    'ALLOWED_ORIGINS',
+    'http://localhost:3000,http://localhost:5500,http://127.0.0.1:5500'
+).split(',')
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # В продакшене ограничить
+    allow_origins=ALLOWED_ORIGINS,  # Белый список доменов
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -229,25 +235,45 @@ async def health_check():
     tags=["analysis"]
 )
 async def analyze_document(
+    request: Request,
     file: UploadFile = File(..., description="Медицинский документ"),
     mode: str = Form(default='doctor', description='doctor или patient'),
     query: Optional[str] = Form(default=None, description='Дополнительный запрос')
 ):
     """
     Анализ медицинского документа.
-    
+
     - **file**: Файл для анализа (PDF, изображение, Excel)
     - **mode**: Режим анализа (doctor или patient)
     - **query**: Дополнительный запрос (опционально)
+    
+    ИСПРАВЛЕНИЕ: Проверка размера файла до загрузки
     """
+    # ИСПРАВЛЕНИЕ: Проверка размера файла ДО загрузки
+    content_length = request.headers.get('Content-Length')
+    if content_length:
+        try:
+            file_size = int(content_length)
+            # Вычитаем размер метаданных формы (примерно 1KB)
+            estimated_file_size = file_size - 1024
+            if estimated_file_size > MAX_FILE_SIZE:
+                raise HTTPException(
+                    status_code=413, 
+                    detail=f'Файл слишком большой (максимум {MAX_FILE_SIZE // (1024*1024)} MB)'
+                )
+        except ValueError:
+            pass  # Если не удалось распарсить, продолжаем
+    
     # Валидация файла
     error = validate_file_type(file.filename, ALLOWED_EXTENSIONS)
     if error:
         raise HTTPException(status_code=400, detail=error)
-    
-    error = validate_file_size(file.size, MAX_FILE_SIZE)
-    if error:
-        raise HTTPException(status_code=400, detail=error)
+
+    # Проверка размера после получения файла
+    if file.size:
+        error = validate_file_size(file.size, MAX_FILE_SIZE)
+        if error:
+            raise HTTPException(status_code=413, detail=error)
     
     # Сохраняем файл во временную директорию
     temp_dir = Path("temp")
