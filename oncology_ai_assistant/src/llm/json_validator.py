@@ -62,14 +62,18 @@ class ValidationResultDetail:
 
 class DoctorVerdictSchema(BaseModel):
     """Схема ответа для врача."""
-    verdict: str
-    confidence_score: float
-    diagnosis_analysis: Dict[str, Any]
-    treatment_analysis: Dict[str, Any]
-    guideline_references: List[Dict[str, Any]]
-    risks: List[Dict[str, Any]]
-    additional_tests_needed: List[str]
-    summary: str
+    verdict: Optional[str] = None
+    confidence_score: Optional[float] = None
+    diagnosis_analysis: Optional[Dict[str, Any]] = None
+    treatment_analysis: Optional[Dict[str, Any]] = None
+    guideline_references: Optional[List[Dict[str, Any]]] = None
+    risks: Optional[List[Dict[str, Any]]] = None
+    additional_tests_needed: Optional[List[str]] = None
+    summary: Optional[str] = None
+    # Дополнительные поля для YandexGPT (новый API)
+    analysis: Optional[str] = None
+    recommendations: Optional[str] = None
+    compliance: Optional[bool] = None
 
 
 class PatientExplanationSchema(BaseModel):
