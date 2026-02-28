@@ -452,8 +452,18 @@
                 window.location.href = '../login.html';
                 return;
             }
+
+            // Получаем режим из URL параметра
+            const urlParams = new URLSearchParams(window.location.search);
+            const modeFromUrl = urlParams.get('mode');
             
-            setMode(initialMode);
+            // Если режим указан в URL - выбираем его
+            if (modeFromUrl && ['interaction', 'analogs', 'treatment'].includes(modeFromUrl)) {
+                setMode(modeFromUrl);
+            } else {
+                setMode(initialMode);
+            }
+            
             initDragDrop();
         });
         
@@ -625,11 +635,12 @@
             }
             // Если пришёл текстовый ответ
             else if (typeof data === 'string') {
-                resultContent = formatTextResponse(data);
+                resultContent = `<div style="line-height: 1.8; white-space: pre-wrap;">${data}</div>`;
             }
             // Если пришёл JSON
             else if (data.analysis || data.result || data.text) {
-                resultContent = formatTextResponse(data.analysis || data.result || data.text);
+                const text = data.analysis || data.result || data.text;
+                resultContent = `<div style="line-height: 1.8; white-space: pre-wrap;">${text}</div>`;
             }
             // Если пришёл details
             else if (data.details) {
@@ -637,7 +648,7 @@
                     const details = typeof data.details === 'string' ? JSON.parse(data.details) : data.details;
                     resultContent = formatStructuredResponse(details);
                 } catch (e) {
-                    resultContent = formatTextResponse(data.details);
+                    resultContent = `<pre style="white-space: pre-wrap;">${JSON.stringify(data.details, null, 2)}</pre>`;
                 }
             }
             // Если ничего не подошло
@@ -668,155 +679,59 @@
                         </div>
                     </div>
                 `;
+                
+                // Прокрутка к результатам
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
             document.getElementById('resultsSection').classList.add('visible');
         }
 
-        // Форматирование структурированного ответа
+        // Вспомогательные функции
         function formatStructuredResponse(data) {
+            if (!data) return '';
+            
             let html = '';
-
+            
             // Verdict
             if (data.verdict) {
-                const verdictColors = {
-                    'соответствует': '#10b981',
-                    'частично_соответствует': '#f59e0b',
-                    'не_соответствует': '#ef4444'
+                const verdicts = {
+                    'соответствует': '✅ Соответствует',
+                    'частично_соответствует': '⚠️ Частично соответствует',
+                    'не_соответствует': '❌ Не соответствует'
                 };
-                const color = verdictColors[data.verdict] || '#6b7280';
-                html += `<div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.02); border-left: 4px solid ${color}; border-radius: var(--radius-md);">
-                    <strong style="color: ${color};">Вердикт:</strong> ${formatVerdict(data.verdict)}
-                    ${data.confidence ? `<span style="margin-left: 15px; color: var(--text-muted);">(${data.confidence})</span>` : ''}
+                html += `<div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.02); border-left: 4px solid #2563eb; border-radius: var(--radius-md);">
+                    <strong>Вердикт:</strong> ${verdicts[data.verdict] || data.verdict}
+                    ${data.confidence_score ? `<span style="margin-left: 15px; color: var(--text-muted);">(Уверенность: ${(data.confidence_score * 100).toFixed(1)}%)</span>` : ''}
                 </div>`;
             }
-
-            // Diagnosis
-            if (data.diagnosis) {
-                html += `<h4 style="color: var(--primary-dark); margin: 20px 0 10px;"><i class="fas fa-file-medical"></i> Диагноз</h4>`;
-                html += formatKeyValuePairs(data.diagnosis);
-            }
-
-            // Treatment
-            if (data.treatment) {
-                html += `<h4 style="color: var(--primary-dark); margin: 20px 0 10px;"><i class="fas fa-pills"></i> Лечение</h4>`;
-                html += formatKeyValuePairs(data.treatment);
-            }
-
-            // References
-            if (data.references && data.references.length > 0) {
-                html += `<h4 style="color: var(--primary-dark); margin: 20px 0 10px;"><i class="fas fa-book"></i> Источники</h4>`;
-                html += `<ul style="line-height: 2;">`;
-                data.references.forEach(ref => {
-                    html += `<li>${ref.source || ''} ${ref.document || ''}`;
-                    if (ref.point) html += `, п.${ref.point}`;
-                    html += `</li>`;
-                });
-                html += `</ul>`;
-            }
-
-            // Risks
-            if (data.risks && data.risks.length > 0) {
-                html += `<h4 style="color: var(--primary-dark); margin: 20px 0 10px;"><i class="fas fa-exclamation-triangle"></i> Риски</h4>`;
-                html += `<ul style="line-height: 2;">`;
-                data.risks.forEach(risk => {
-                    html += `<li><strong>${risk.type || 'Риск'}:</strong> ${risk.description || ''}`;
-                    if (risk.recommendation) html += `<br><em>Рекомендация: ${risk.recommendation}</em>`;
-                    html += `</li>`;
-                });
-                html += `</ul>`;
-            }
-
-            // Additional tests
-            if (data.additional_tests && data.additional_tests.length > 0) {
-                html += `<h4 style="color: var(--primary-dark); margin: 20px 0 10px;"><i class="fas fa-flask"></i> Дополнительные обследования</h4>`;
-                html += `<ul style="line-height: 2;">`;
-                data.additional_tests.forEach(test => {
-                    html += `<li>${test}</li>`;
-                });
-                html += `</ul>`;
-            }
-
+            
             // Summary
             if (data.summary) {
-                html += `<h4 style="color: var(--primary-dark); margin: 20px 0 10px;"><i class="fas fa-comment"></i> Резюме</h4>`;
-                html += `<p style="background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: var(--radius-md); line-height: 1.8;">${data.summary}</p>`;
+                html += `<p style="background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: var(--radius-md); margin-bottom: 20px;">${data.summary}</p>`;
             }
-
+            
             // Disclaimer
             if (data.disclaimer) {
-                html += `<div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: var(--radius-md);">
+                html += `<div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: var(--radius-md);">
                     <p style="color: #92400e; font-size: 14px; margin: 0;">
                         <i class="fas fa-exclamation-triangle"></i> ${data.disclaimer}
                     </p>
                 </div>`;
             }
-
+            
             return html;
-        }
-
-        // Форматирование текстового ответа
-        function formatTextResponse(text) {
-            if (!text) return '';
-            
-            // Заменяем переносы строк на <br>
-            let formatted = text.replace(/\n/g, '<br>');
-            
-            // Выделяем эмодзи
-            formatted = formatted.replace(/([📊✅⚠️📋💊🔄📚💡📌])/g, '<span style="font-size: 1.2em;">$1</span>');
-            
-            // Выделяем разделы
-            formatted = formatted.replace(/^(─{10,})/gm, '<div style="border-bottom: 2px solid #e2e8f0; margin: 15px 0;"></div>');
-            
-            return `<div style="line-height: 1.8; white-space: pre-wrap;">${formatted}</div>`;
-        }
-
-        // Вспомогательные функции
-        function formatVerdict(verdict) {
-            const verdicts = {
-                'соответствует': '✅ Соответствует',
-                'частично_соответствует': '⚠️ Частично соответствует',
-                'не_соответствует': '❌ Не соответствует',
-                'недостаточно_данных': '❓ Недостаточно данных'
-            };
-            return verdicts[verdict] || verdict;
         }
 
         function getResultTitle(mode, verdict) {
             const titles = {
                 'interaction': 'Проверка совместимости',
                 'analogs': 'Поиск аналогов',
-                'treatment': 'Проверка тактики лечения'
+                'treatment': 'Проверка тактики лечения',
+                'doctor': 'Анализ лечения'
             };
-            const baseTitle = titles[mode] || 'Результат';
-            
-            if (verdict) {
-                if (verdict.includes('соответствует')) return `${baseTitle}: ✅`;
-                if (verdict.includes('частично')) return `${baseTitle}: ⚠️`;
-                if (verdict.includes('не соответствует')) return `${baseTitle}: ❌`;
-            }
-            
-            return baseTitle;
+            return titles[mode] || 'Результат анализа';
         }
-
-        function formatKeyValuePairs(obj) {
-            if (!obj || typeof obj !== 'object') return '';
-            
-            let html = '<div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: var(--radius-md);">';
-            for (const [key, value] of Object.entries(obj)) {
-                if (value) {
-                    const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    html += `<div style="margin-bottom: 8px;"><strong>${formattedKey}:</strong> ${value}</div>`;
-                }
-            }
-            html += '</div>';
-            return html;
-        }
-                        ${data.confidence ? `
-                            <div style="margin-top: 20px; padding: 15px; background: rgba(37, 99, 235, 0.1); border-radius: var(--radius-md);">
-                                <strong>Уверенность AI:</strong> ${(data.confidence * 100).toFixed(1)}%
-                            </div>
-                        ` : ''}
                         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
                             <a href="analysis-history.html" class="btn btn-primary" style="display: inline-block;">
                                 <i class="fas fa-history"></i> Смотреть историю анализов
