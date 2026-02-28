@@ -1,5 +1,6 @@
 """
 Упрощённый клиент YandexGPT через новый API (ai.api.cloud.yandex.net)
+Использует API Key вместо IAM токена
 """
 
 import requests
@@ -20,10 +21,17 @@ class YandexGPTConfig:
     model_name: str = "yandexgpt/rc"
     temperature: float = 0.3
     max_tokens: int = 4000
+    # Для совместимости со старым кодом
+    iam_token: Optional[str] = None
+    service_account_key_path: Optional[str] = None
     
     @property
     def model_uri(self) -> str:
         return f"gpt://{self.folder_id}/{self.model_name}"
+    
+    def get_iam_token(self) -> str:
+        """Для совместимости со старым кодом."""
+        return self.iam_token or ""
 
 
 @dataclass
@@ -105,7 +113,8 @@ class YandexGPTClient:
                 },
                 timeout=10
             )
-            return response.status_code in [200, 400]  # 400 OK для теста
+            # 200 OK или 400 (плохой запрос) - оба нормальны для health check
+            return response.status_code in [200, 400]
         except Exception as e:
             logger.error(f"Health check failed: {e}")
             return False
@@ -129,41 +138,52 @@ class YandexGPTClient:
         # Формируем запрос
         instructions = system_prompt or "Ты полезный ассистент."
         
-        response = requests.post(
-            self.base_url,
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': f'Api-Key {self.config.api_key}',
-                'OpenAI-Project': self.config.folder_id
-            },
-            json={
-                "model": self.config.model_uri,
-                "instructions": instructions,
-                "input": user_text,
-                "temperature": temp,
-                "max_output_tokens": tokens
-            },
-            timeout=60
-        )
-        
-        response.raise_for_status()
-        data = response.json()
-        
-        # Обрабатываем ответ
-        result = data.get('result', {})
-        text = result.get('alternatives', [{}])[0].get('message', {}).get('text', '')
-        usage = result.get('usage', {})
-        
-        llm_response = LLMResponse(
-            text=text,
-            usage={
-                'input_tokens': int(usage.get('inputTextTokens', 0)),
-                'output_tokens': int(usage.get('completionTokens', 0))
-            },
-            model_version=result.get('modelVersion', ''),
-            finish_reason=result.get('alternatives', [{}])[0].get('status', ''),
-            processing_time=time.time() - start_time
-        )
-        
-        logger.info(f"Получен ответ ({llm_response.total_tokens} токенов, {llm_response.processing_time:.2f}s)")
-        return llm_response
+        try:
+            response = requests.post(
+                self.base_url,
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Api-Key {self.config.api_key}',
+                    'OpenAI-Project': self.config.folder_id
+                },
+                json={
+                    "model": self.config.model_uri,
+                    "instructions": instructions,
+                    "input": user_text,
+                    "temperature": temp,
+                    "max_output_tokens": tokens
+                },
+                timeout=60
+            )
+            
+            response.raise_for_status()
+            data = response.json()
+            
+            # Обрабатываем ответ
+            result = data.get('result', {})
+            text = result.get('alternatives', [{}])[0].get('message', {}).get('text', '')
+            usage = result.get('usage', {})
+            
+            llm_response = LLMResponse(
+                text=text,
+                usage={
+                    'input_tokens': int(usage.get('inputTextTokens', 0)),
+                    'output_tokens': int(usage.get('completionTokens', 0))
+                },
+                model_version=result.get('modelVersion', ''),
+                finish_reason=result.get('alternatives', [{}])[0].get('status', ''),
+                processing_time=time.time() - start_time
+            )
+            
+            logger.info(f"Получен ответ ({llm_response.total_tokens} токенов, {llm_response.processing_time:.2f}s)")
+            return llm_response
+            
+        except requests.exceptions.Timeout:
+            logger.error("Превышено время ожидания ответа от YandexGPT")
+            raise
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Ошибка запроса к YandexGPT: {e}")
+            raise
+        except Exception as e:
+            logger.error(f"Неожиданная ошибка: {e}")
+            raise
