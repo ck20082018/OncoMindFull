@@ -39,7 +39,7 @@ AI_PIPELINE_URL = os.environ.get('AI_PIPELINE_URL', 'http://127.0.0.1:8000')
 UPLOAD_FOLDER = Path(__file__).parent / 'uploads'
 UPLOAD_FOLDER.mkdir(exist_ok=True)
 
-ALLOWED_EXTENSIONS = {'.pdf', '.xlsx', '.txt', '.jpg', '.jpeg', '.png'}
+ALLOWED_EXTENSIONS = {'.pdf', '.xlsx', '.docx', '.txt', '.jpg', '.jpeg', '.png'}
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 # Путь к файлу пользователей
@@ -722,6 +722,68 @@ def unassign_patient():
         
     except Exception as e:
         logger.error(f"Ошибка открепления пациента: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@app.route('/api/guidelines-pdf', methods=['GET'])
+def get_guidelines_pdf():
+    """Получение списка PDF клинических рекомендаций"""
+    try:
+        import os
+        pdf_dir = Path(__file__).parent / 'knowledge_base_pdf'
+        
+        if not pdf_dir.exists():
+            pdf_dir.mkdir(exist_ok=True)
+            return jsonify({'guidelines': [], 'message': 'Папка пуста. Добавьте PDF файлы.'}), 200
+        
+        # Получаем список PDF файлов
+        pdf_files = [f for f in pdf_dir.iterdir() if f.suffix.lower() == '.pdf']
+        
+        guidelines = []
+        for pdf in pdf_files:
+            guidelines.append({
+                'id': pdf.stem,
+                'title': pdf.stem.replace('-', ' ').replace('_', ' ').title(),
+                'filename': pdf.name,
+                'size': pdf.stat().st_size,
+                'created': pdf.stat().st_mtime
+            })
+        
+        # Сортируем по имени
+        guidelines.sort(key=lambda x: x['title'])
+        
+        return jsonify({'guidelines': guidelines}), 200
+        
+    except Exception as e:
+        logger.error(f"Ошибка получения списка PDF: {e}")
+        return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
+
+
+@app.route('/api/guidelines-pdf/<filename>', methods=['GET'])
+def download_guideline_pdf(filename):
+    """Скачивание/просмотр PDF клинической рекомендации"""
+    try:
+        from flask import send_file
+        import os
+        
+        pdf_dir = Path(__file__).parent / 'knowledge_base_pdf'
+        pdf_path = pdf_dir / filename
+        
+        # Проверка безопасности
+        if not pdf_path.exists():
+            return jsonify({'error': 'Файл не найден'}), 404
+        
+        if not pdf_path.suffix.lower() == '.pdf':
+            return jsonify({'error': 'Неверный формат файла'}), 400
+        
+        return send_file(
+            pdf_path,
+            mimetype='application/pdf',
+            as_attachment=False  # Открывать в браузере, не скачивать
+        )
+        
+    except Exception as e:
+        logger.error(f"Ошибка отправки PDF: {e}")
         return jsonify({'error': 'Внутренняя ошибка сервера'}), 500
 
 

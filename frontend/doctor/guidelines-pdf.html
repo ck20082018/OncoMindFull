@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OncoMind — Клинические рекомендации (PDF)</title>
+
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css-all.min.css">
+    <style>
+        .guidelines-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .guidelines-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius-full);
+            font-size: 15px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .guidelines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .guideline-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .guideline-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+
+        .guideline-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.2));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .guideline-icon i {
+            font-size: 30px;
+            color: #ef4444;
+        }
+
+        .guideline-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .guideline-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .guideline-meta i {
+            margin-right: 5px;
+        }
+
+        .guideline-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-view {
+            flex: 1;
+            padding: 10px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-view:hover {
+            background: var(--primary-deep);
+            transform: translateY(-2px);
+        }
+
+        .btn-download {
+            padding: 10px 15px;
+            background: var(--bg-light);
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-light);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-download:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: var(--radius-lg);
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Модальное окно для просмотра PDF */
+        .pdf-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+        }
+
+        .pdf-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pdf-modal-content {
+            background: white;
+            width: 90%;
+            height: 90%;
+            border-radius: var(--radius-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pdf-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pdf-modal-close:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .pdf-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- ШАПКА -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">OncoMind</div>
+            <div class="burger-menu">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="../index.html" class="nav-link">Главная</a>
+                <a href="../team.html" class="nav-link">О команде</a>
+                <a href="../solutions.html" class="nav-link">Медицинские ИИ решения</a>
+                <a href="dashboard.html" class="nav-link">Кабинет</a>
+                <a href="profile.html" class="nav-link">Профиль</a>
+                <a href="#" id="logoutBtn" class="btn btn-nav">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <section>
+        <div class="container guidelines-container">
+            <div class="guidelines-header">
+                <h1>Клинические рекомендации</h1>
+                <a href="https://cr.minzdrav.gov.ru/" target="_blank" class="btn btn-primary">
+                    <i class="fas fa-external-link-alt"></i> Источник (cr.minzdrav.gov.ru)
+                </a>
+            </div>
+
+            <!-- Поиск -->
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Поиск рекомендаций..." id="searchInput" oninput="filterGuidelines()">
+            </div>
+
+            <!-- Список рекомендаций -->
+            <div class="guidelines-grid" id="guidelinesGrid">
+                <!-- Загружается через JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ PDF -->
+    <div class="pdf-modal" id="pdfModal">
+        <div class="pdf-modal-content">
+            <button class="pdf-modal-close" onclick="closePdfModal()">✕</button>
+            <iframe class="pdf-frame" id="pdfFrame" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- ПОДВАЛ -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div>© 2026 OncoMind. Все права защищены.</div>
+            <div class="footer-links">
+                <a href="../index.html">Главная</a>
+                <a href="../team.html">О команде</a>
+                <a href="../solutions.html">Решения</a>
+            </div>
+            <div class="footer-contact">
+                <a href="mailto:team@oncomind.ai"><i class="fas fa-envelope"></i> team@oncomind.ai</a>
+                <a href="#"><i class="fab fa-telegram"></i> Telegram</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../config.js"></script>
+    <script>
+        let allGuidelines = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'doctor') {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            loadGuidelines();
+        });
+
+        // Загрузка рекомендаций
+        async function loadGuidelines() {
+            try {
+                const response = await fetch(`${API_CONFIG.BASE_URL}/api/guidelines-pdf`);
+                if (response.ok) {
+                    const data = await response.json();
+                    allGuidelines = data.guidelines || [];
+                    renderGuidelines(allGuidelines);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+            }
+        }
+
+        // Фильтрация
+        function filterGuidelines() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!query) {
+                renderGuidelines(allGuidelines);
+                return;
+            }
+
+            const filtered = allGuidelines.filter(g => 
+                g.title.toLowerCase().includes(query) ||
+                g.id.toLowerCase().includes(query)
+            );
+
+            renderGuidelines(filtered);
+        }
+
+        // Отрисовка
+        function renderGuidelines(guidelines) {
+            const grid = document.getElementById('guidelinesGrid');
+            
+            if (guidelines.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>Нет рекомендаций</h3>
+                        <p>PDF файлы клинических рекомендаций отсутствуют</p>
+                        <p style="font-size: 14px; color: var(--text-muted);">
+                            Добавьте PDF файлы в папку:<br>
+                            <code>/var/www/oncomind/backend/knowledge_base_pdf/</code>
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            guidelines.forEach(g => {
+                const size = (g.size / 1024 / 1024).toFixed(2);
+                const date = new Date(g.created * 1000).toLocaleDateString('ru-RU');
+                
+                html += `
+                    <div class="guideline-card">
+                        <div class="guideline-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <h3 class="guideline-title">${g.title}</h3>
+                        <div class="guideline-meta">
+                            <span><i class="fas fa-file"></i> PDF</span>
+                            <span><i class="fas fa-hdd"></i> ${size} MB</span>
+                            <span><i class="fas fa-calendar"></i> ${date}</span>
+                        </div>
+                        <div class="guideline-actions">
+                            <button class="btn-view" onclick="viewPdf('${g.filename}')">
+                                <i class="fas fa-eye"></i> Открыть
+                            </button>
+                            <a href="${API_CONFIG.BASE_URL}/api/guidelines-pdf/${g.filename}" 
+                               class="btn-download" 
+                               download>
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // Просмотр PDF
+        window.viewPdf = function(filename) {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            
+            frame.src = `${API_CONFIG.BASE_URL}/api/guidelines-pdf/${filename}`;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        // Закрыть модальное окно
+        window.closePdfModal = function() {
+            const modal = document.getElementById('pdfModal');
+            const frame = document.getElementById('pdfFrame');
+            
+            modal.classList.remove('active');
+            frame.src = '';
+            document.body.style.overflow = '';
+        };
+
+        // Закрытие по клику вне
+        window.onclick = function(event) {
+            const modal = document.getElementById('pdfModal');
+            if (event.target === modal) {
+                closePdfModal();
+            }
+        };
+
+        // Выход
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>
