@@ -158,24 +158,40 @@ class YandexGPTClient:
             
             response.raise_for_status()
             data = response.json()
+
+            # Обрабатываем ответ (новый API использует 'output', старый 'result')
+            result = data.get('result', {}) or data.get('output', {})
             
-            # Обрабатываем ответ
-            result = data.get('result', {})
-            text = result.get('alternatives', [{}])[0].get('message', {}).get('text', '')
-            usage = result.get('usage', {})
+            # Извлекаем текст
+            text = ''
+            if 'alternatives' in result:
+                text = result.get('alternatives', [{}])[0].get('message', {}).get('text', '')
+            elif 'choices' in result:
+                text = result.get('choices', [{}])[0].get('message', {}).get('text', '')
+            elif 'content' in result:
+                # Новый формат: output[0].content[0].text
+                output_list = data.get('output', [])
+                if output_list:
+                    content = output_list[0].get('content', [{}])
+                    if content:
+                        text = content[0].get('text', '')
             
+            usage = result.get('usage', data.get('usage', {}))
+
             llm_response = LLMResponse(
                 text=text,
                 usage={
-                    'input_tokens': int(usage.get('inputTextTokens', 0)),
-                    'output_tokens': int(usage.get('completionTokens', 0))
+                    'input_tokens': int(usage.get('inputTextTokens', usage.get('input_tokens', 0))),
+                    'output_tokens': int(usage.get('completionTokens', usage.get('output_tokens', 0)))
                 },
-                model_version=result.get('modelVersion', ''),
-                finish_reason=result.get('alternatives', [{}])[0].get('status', ''),
+                model_version=result.get('modelVersion', data.get('model', '')),
+                finish_reason=result.get('alternatives', [{}])[0].get('status', 'completed'),
                 processing_time=time.time() - start_time
             )
-            
+
             logger.info(f"Получен ответ ({llm_response.total_tokens} токенов, {llm_response.processing_time:.2f}s)")
+            if not text:
+                logger.warning(f"Пустой ответ от API! Full response: {data}")
             return llm_response
             
         except requests.exceptions.Timeout:
