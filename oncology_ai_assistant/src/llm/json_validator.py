@@ -198,25 +198,25 @@ class JSONValidator:
     def _extract_json(self, text: str) -> Optional[str]:
         """
         Извлечь JSON из текста (удалить markdown, лишний текст).
-        
+
         Args:
             text: Исходный текст.
-            
+
         Returns:
             Очищенный JSON или None.
         """
         if not text:
             return None
-        
+
         text = text.strip()
-        
-        # Удаляем markdown code blocks
+
+        # Удаляем markdown code blocks (```json ... ``` или ``` ... ```)
         if text.startswith('```'):
             # Находим содержимое между ```
             pattern = r'```(?:json)?\s*(.*?)\s*```'
-            match = re.search(pattern, text, re.DOTALL)
+            match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
             if match:
-                text = match.group(1)
+                text = match.group(1).strip()
             else:
                 # Удаляем только первые и последние ```
                 lines = text.split('\n')
@@ -224,22 +224,22 @@ class JSONValidator:
                     lines = lines[1:]
                 if lines and lines[-1].strip() == '```':
                     lines = lines[:-1]
-                text = '\n'.join(lines)
-        
+                text = '\n'.join(lines).strip()
+
         # Пытаемся найти JSON по скобкам
         text = text.strip()
-        
+
         # Если текст начинается с { и заканчивается на }
         if text.startswith('{') and text.endswith('}'):
             return text
-        
+
         # Ищем первую { и последнюю }
         start_idx = text.find('{')
         end_idx = text.rfind('}') + 1
-        
+
         if start_idx != -1 and end_idx > start_idx:
             return text[start_idx:end_idx]
-        
+
         return text
     
     def _parse_json(self, json_text: str) -> Optional[Dict[str, Any]]:
