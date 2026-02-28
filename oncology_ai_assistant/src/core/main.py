@@ -116,17 +116,18 @@ async def lifespan(app: FastAPI):
         # Используем API Key вместо IAM токена
         api_key = os.getenv('YC_API_KEY', '')
         folder_id = os.getenv('YC_FOLDER_ID', '')
-        
-        if not api_key:
-            logger.warning("YC_API_KEY не указан, используем IAM токен")
-            yandex_config = YandexGPTConfig(
-                folder_id=folder_id,
-                api_key=""  # Будет использоваться старый клиент
-            )
-        else:
+
+        if api_key:
+            logger.info(f"Используем YandexGPT с API Key (folder_id: {folder_id})")
             yandex_config = YandexGPTConfig(
                 folder_id=folder_id,
                 api_key=api_key
+            )
+        else:
+            logger.warning("YC_API_KEY не указан!")
+            yandex_config = YandexGPTConfig(
+                folder_id=folder_id,
+                api_key=""
             )
 
         # Создание пайплайна
