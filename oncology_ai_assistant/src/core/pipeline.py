@@ -24,7 +24,7 @@ from datetime import datetime
 from pathlib import Path
 
 from ..anonymization.anonymizer import Anonymizer, AnonymizationResult
-from ..llm.yandex_client_simple import YandexGPTConfig, LLMResponse, YandexGPTClient
+from ..llm.yandex_client_new import YandexGPTConfig, YandexGPTClient, LLMResponse
 from ..llm.prompt_templates import (
     get_system_prompt,
     create_doctor_prompt,
