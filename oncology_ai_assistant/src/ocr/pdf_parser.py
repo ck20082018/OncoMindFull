@@ -34,6 +34,13 @@ try:
 except ImportError:
     PYMUPDF_AVAILABLE = False
 
+# python-docx для работы с DOCX
+try:
+    from docx import Document
+    DOCX_AVAILABLE = True
+except ImportError:
+    DOCX_AVAILABLE = False
+
 
 logger = logging.getLogger(__name__)
 
@@ -495,15 +502,51 @@ def pdf_to_images(
 def extract_text_from_excel(excel_path: Union[str, Path]) -> str:
     """
     Извлечь текст из Excel.
-    
+
     Args:
         excel_path: Путь к файлу.
-        
+
     Returns:
         Текст документа.
     """
     parser = ExcelParser()
     return parser.to_text(excel_path)
+
+
+def extract_text_from_docx(docx_path: Union[str, Path]) -> str:
+    """
+    Извлечь текст из DOCX файла.
+    
+    Args:
+        docx_path: Путь к DOCX файлу.
+    
+    Returns:
+        Текст из документа.
+    """
+    if not DOCX_AVAILABLE:
+        logger.error("python-docx не установлен")
+        return ""
+    
+    try:
+        doc = Document(docx_path)
+        
+        text_parts = []
+        for para in doc.paragraphs:
+            if para.text.strip():
+                text_parts.append(para.text)
+        
+        # Добавляем текст из таблиц
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    if cell.text.strip():
+                        text_parts.append(cell.text)
+        
+        return '\n'.join(text_parts)
+    
+    except Exception as e:
+        logger.error(f"Ошибка чтения DOCX {docx_path}: {e}")
+        return ""
 
 
 # Импорт для BytesIO

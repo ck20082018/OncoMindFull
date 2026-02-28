@@ -317,17 +317,17 @@ class OncologyPipeline:
     def _extract_text(self, file_path: Path) -> str:
         """Извлечь текст из файла."""
         suffix = file_path.suffix.lower()
-        
+
         if suffix in ['.jpg', '.jpeg', '.png', '.tiff', '.bmp', '.webp']:
             # Изображение
             result = self.ocr_engine.recognize(str(file_path))
             return result.text
-        
+
         elif suffix == '.pdf':
             # PDF
             parser = PDFParser()
             doc = parser.parse(str(file_path))
-            
+
             if doc.has_text:
                 return doc.full_text
             else:
@@ -336,12 +336,21 @@ class OncologyPipeline:
                 ocr = MedicalDocumentOCR()
                 results = ocr.process_pdf(str(file_path))
                 return ocr.get_full_text(results)
-        
+
         elif suffix in ['.xls', '.xlsx']:
             # Excel
             parser = ExcelParser()
             return parser.to_text(str(file_path))
-        
+
+        elif suffix == '.docx':
+            # DOCX
+            logger.info(f"Чтение DOCX файла: {file_path}")
+            from ..ocr.pdf_parser import extract_text_from_docx
+            text = extract_text_from_docx(str(file_path))
+            if not text:
+                logger.warning("Не удалось извлечь текст из DOCX")
+            return text
+
         else:
             raise ValueError(f"Неподдерживаемый формат: {suffix}")
     
