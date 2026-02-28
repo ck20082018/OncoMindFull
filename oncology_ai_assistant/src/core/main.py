@@ -94,7 +94,7 @@ guideline_updater: Optional[GuidelineUpdater] = None
 
 APP_VERSION = "1.0.0"
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
-ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png', '.tiff', '.bmp', '.xls', '.xlsx'}
+ALLOWED_EXTENSIONS = {'.pdf', '.jpg', '.jpeg', '.png', '.tiff', '.bmp', '.xls', '.xlsx', '.docx'}
 
 
 # -----------------------------------------------------------------------------
