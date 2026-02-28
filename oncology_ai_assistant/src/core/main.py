@@ -26,7 +26,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from .pipeline import OncologyPipeline, PipelineBuilder, PipelineOutput
-from ..llm.yandex_client_simple import YandexGPTConfig, LLMResponse
+from ..llm.yandex_client_new import YandexGPTConfig, YandexGPTClient
 from ..knowledge_base.guideline_manager import GuidelineManager
 from ..knowledge_base.guideline_updater import GuidelineUpdater
 from ..utils.logger import setup_logging
@@ -113,11 +113,21 @@ async def lifespan(app: FastAPI):
         setup_logging()
 
         # Загрузка конфигурации из .env
-        yandex_config = YandexGPTConfig(
-            folder_id=os.getenv('YC_FOLDER_ID', ''),
-            iam_token=os.getenv('YC_IAM_TOKEN'),
-            service_account_key_path=os.getenv('YC_SERVICE_ACCOUNT_KEY')
-        )
+        # Используем API Key вместо IAM токена
+        api_key = os.getenv('YC_API_KEY', '')
+        folder_id = os.getenv('YC_FOLDER_ID', '')
+        
+        if not api_key:
+            logger.warning("YC_API_KEY не указан, используем IAM токен")
+            yandex_config = YandexGPTConfig(
+                folder_id=folder_id,
+                api_key=""  # Будет использоваться старый клиент
+            )
+        else:
+            yandex_config = YandexGPTConfig(
+                folder_id=folder_id,
+                api_key=api_key
+            )
 
         # Создание пайплайна
         builder = PipelineBuilder()
