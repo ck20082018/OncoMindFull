@@ -160,23 +160,35 @@ class YandexGPTClient:
             data = response.json()
 
             # Обрабатываем ответ (новый API использует 'output', старый 'result')
-            result = data.get('result', {}) or data.get('output', {})
-            
+            result = data.get('result', {})
+            if not result:
+                # Новый формат API
+                output_list = data.get('output', [])
+                if output_list and isinstance(output_list, list):
+                    result = output_list[0] if isinstance(output_list[0], dict) else {}
+                elif isinstance(data.get('output'), dict):
+                    result = data.get('output', {})
+
             # Извлекаем текст
             text = ''
-            if 'alternatives' in result:
-                text = result.get('alternatives', [{}])[0].get('message', {}).get('text', '')
-            elif 'choices' in result:
-                text = result.get('choices', [{}])[0].get('message', {}).get('text', '')
-            elif 'content' in result:
-                # Новый формат: output[0].content[0].text
-                output_list = data.get('output', [])
-                if output_list:
-                    content = output_list[0].get('content', [{}])
-                    if content:
-                        text = content[0].get('text', '')
-            
-            usage = result.get('usage', data.get('usage', {}))
+            if isinstance(result, dict):
+                if 'alternatives' in result:
+                    text = result.get('alternatives', [{}])[0].get('message', {}).get('text', '')
+                elif 'choices' in result:
+                    text = result.get('choices', [{}])[0].get('message', {}).get('text', '')
+                elif 'content' in result:
+                    # Новый формат: output[0].content[0].text
+                    output_list = data.get('output', [])
+                    if output_list and isinstance(output_list, list):
+                        content = output_list[0].get('content', [{}])
+                        if content and isinstance(content, list):
+                            text = content[0].get('text', '')
+                        elif isinstance(content, dict):
+                            text = content.get('text', '')
+
+            usage = {}
+            if isinstance(result, dict):
+                usage = result.get('usage', data.get('usage', {}))
 
             llm_response = LLMResponse(
                 text=text,
@@ -184,8 +196,8 @@ class YandexGPTClient:
                     'input_tokens': int(usage.get('inputTextTokens', usage.get('input_tokens', 0))),
                     'output_tokens': int(usage.get('completionTokens', usage.get('output_tokens', 0)))
                 },
-                model_version=result.get('modelVersion', data.get('model', '')),
-                finish_reason=result.get('alternatives', [{}])[0].get('status', 'completed'),
+                model_version=result.get('modelVersion', data.get('model', '')) if isinstance(result, dict) else '',
+                finish_reason='completed',
                 processing_time=time.time() - start_time
             )
 
