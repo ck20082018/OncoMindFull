@@ -70,6 +70,7 @@ class DoctorVerdictSchema(BaseModel):
     risks: Optional[List[Dict[str, Any]]] = None
     additional_tests_needed: Optional[List[str]] = None
     summary: Optional[str] = None
+    disclaimer: Optional[str] = None
     # Дополнительные поля для YandexGPT (новый API)
     analysis: Optional[str] = None
     recommendations: Optional[str] = None
