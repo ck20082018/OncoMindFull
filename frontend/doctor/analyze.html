@@ -725,32 +725,126 @@
 
         // Форматирование структурированного ответа
         function formatStructuredResponse(data) {
+            if (!data || typeof data !== 'object') {
+                return '<p>Нет данных для отображения</p>';
+            }
+            
             let html = '';
+            const escape = (text) => text; // Упрощаем для теста
 
+            // Verdict
             if (data.verdict) {
-                const verdictColor = data.verdict.toLowerCase().includes('рекомендовано') || data.verdict.toLowerCase().includes('безопасно') ? '#10b981' : '#ef4444';
-                html += `<div style="font-size: 18px; font-weight: 600; color: ${verdictColor}; margin-bottom: 20px; padding: 15px; background: ${verdictColor === '#10b981' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'}; border-radius: var(--radius-md);">
-                    <i class="fas ${verdictColor === '#10b981' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> 
-                    ${OncoMindUtils ? OncoMindUtils.escapeHtml(data.verdict) : data.verdict}
+                const verdicts = {
+                    'соответствует': {color: '#10b981', icon: 'fa-check-circle', text: '✅ Соответствует'},
+                    'частично_соответствует': {color: '#f59e0b', icon: 'fa-exclamation-triangle', text: '⚠️ Частично соответствует'},
+                    'не_соответствует': {color: '#ef4444', icon: 'fa-times-circle', text: '❌ Не соответствует'}
+                };
+                const v = verdicts[data.verdict.toLowerCase().replace(/\s/g, '_')] || {color: '#6b7280', icon: 'fa-info-circle', text: data.verdict};
+                html += `<div style="margin-bottom: 25px; padding: 20px; background: rgba(0,0,0,0.02); border-left: 4px solid ${v.color}; border-radius: var(--radius-md);">
+                    <div style="font-size: 20px; font-weight: 600; color: ${v.color};">
+                        <i class="fas ${v.icon}"></i> ${v.text}
+                        ${data.confidence_score ? `<span style="margin-left: 15px; font-size: 16px; color: var(--text-muted); font-weight: 400;">(Уверенность: ${(data.confidence_score * 100).toFixed(1)}%)</span>` : ''}
+                    </div>
                 </div>`;
             }
 
-            if (data.analysis) {
-                html += `<div style="margin-bottom: 20px;"><strong>Анализ:</strong><div style="line-height: 1.8; margin-top: 10px;">${OncoMindUtils ? OncoMindUtils.escapeHtml(data.analysis) : data.analysis}</div></div>`;
+            // Diagnosis Analysis
+            if (data.diagnosis_analysis) {
+                html += `<div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--primary-dark); margin-bottom: 15px;"><i class="fas fa-file-medical"></i> Диагноз</h4>
+                    <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: var(--radius-md);">`;
+                for (const [key, value] of Object.entries(data.diagnosis_analysis)) {
+                    if (value) {
+                        const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        html += `<div style="margin-bottom: 8px;"><strong>${label}:</strong> ${escape(value)}</div>`;
+                    }
+                }
+                html += `</div></div>`;
             }
 
-            if (data.recommendations) {
-                html += `<div style="margin-bottom: 20px;"><strong>Рекомендации:</strong><ul style="line-height: 1.8; margin-top: 10px;">`;
-                const recs = Array.isArray(data.recommendations) ? data.recommendations : [data.recommendations];
-                recs.forEach(rec => {
-                    html += `<li>${OncoMindUtils ? OncoMindUtils.escapeHtml(rec) : rec}</li>`;
+            // Treatment Analysis
+            if (data.treatment_analysis) {
+                html += `<div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--primary-dark); margin-bottom: 15px;"><i class="fas fa-pills"></i> Лечение</h4>
+                    <div style="background: rgba(0,0,0,0.02); padding: 15px; border-radius: var(--radius-md);">`;
+                for (const [key, value] of Object.entries(data.treatment_analysis)) {
+                    if (value && key !== 'discrepancies') {
+                        const label = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        html += `<div style="margin-bottom: 8px;"><strong>${label}:</strong> ${escape(value)}</div>`;
+                    }
+                }
+                if (data.treatment_analysis.discrepancies && data.treatment_analysis.discrepancies.length > 0) {
+                    html += `<div style="margin-top: 15px;"><strong>Несоответствия:</strong><ul style="margin-top: 8px;">`;
+                    data.treatment_analysis.discrepancies.forEach(d => {
+                        html += `<li>${escape(d)}</li>`;
+                    });
+                    html += `</ul></div>`;
+                }
+                html += `</div></div>`;
+            }
+
+            // Guideline References
+            if (data.guideline_references && data.guideline_references.length > 0) {
+                html += `<div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--primary-dark); margin-bottom: 15px;"><i class="fas fa-book"></i> Источники</h4>
+                    <ul style="line-height: 2;">`;
+                data.guideline_references.forEach(ref => {
+                    html += `<li><strong>${escape(ref.source || '')}</strong> - ${escape(ref.document || '')}`;
+                    if (ref.section) html += `, раздел: ${escape(ref.section)}`;
+                    if (ref.point) html += `, п.${escape(ref.point)}`;
+                    if (ref.quote) html += `<br><em style="color: var(--text-secondary);">"${escape(ref.quote)}"</em>`;
+                    html += `</li>`;
                 });
                 html += `</ul></div>`;
             }
 
+            // Risks
+            if (data.risks && data.risks.length > 0) {
+                html += `<div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--primary-dark); margin-bottom: 15px;"><i class="fas fa-exclamation-triangle"></i> Риски</h4>`;
+                data.risks.forEach((risk, idx) => {
+                    const severityColors = {низкий: '#10b981', средний: '#f59e0b', высокий: '#ef4444'};
+                    const color = severityColors[risk.severity] || '#6b7280';
+                    html += `<div style="margin-bottom: 15px; padding: 15px; background: rgba(0,0,0,0.02); border-left: 3px solid ${color}; border-radius: var(--radius-md);">
+                        <div style="font-weight: 600; color: ${color}; margin-bottom: 8px;">
+                            <i class="fas fa-${risk.type === 'побочный_эффект' ? 'radiation' : risk.type === 'противопоказание' ? 'ban' : 'link'}"></i>
+                            ${escape(risk.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()))}
+                            <span style="margin-left: 10px; font-size: 12px; padding: 3px 8px; background: ${color}; color: white; border-radius: 12px;">${escape(risk.severity)}</span>
+                        </div>
+                        <div style="line-height: 1.6;">${escape(risk.description || '')}</div>
+                        ${risk.recommendation ? `<div style="margin-top: 8px; color: var(--primary-blue);"><strong>Рекомендация:</strong> ${escape(risk.recommendation)}</div>` : ''}
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+
+            // Additional Tests
+            if (data.additional_tests_needed && data.additional_tests_needed.length > 0) {
+                html += `<div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--primary-dark); margin-bottom: 15px;"><i class="fas fa-flask"></i> Дополнительные обследования</h4>
+                    <ul style="line-height: 2;">`;
+                data.additional_tests_needed.forEach(test => {
+                    html += `<li>${escape(test)}</li>`;
+                });
+                html += `</ul></div>`;
+            }
+
+            // Summary
+            if (data.summary) {
+                html += `<div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--primary-dark); margin-bottom: 15px;"><i class="fas fa-comment"></i> Резюме</h4>
+                    <p style="background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: var(--radius-md); line-height: 1.8;">
+                        ${escape(data.summary)}
+                    </p>
+                </div>`;
+            }
+
+            // Disclaimer
             if (data.disclaimer) {
-                html += `<div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: var(--radius-md); font-size: 14px;">
-                    <i class="fas fa-info-circle"></i> ${OncoMindUtils ? OncoMindUtils.escapeHtml(data.disclaimer) : data.disclaimer}
+                html += `<div style="margin-top: 30px; padding: 20px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: var(--radius-md);">
+                    <p style="color: #92400e; font-size: 14px; margin: 0; line-height: 1.6;">
+                        <i class="fas fa-exclamation-triangle"></i> ${escape(data.disclaimer)}
+                    </p>
                 </div>`;
             }
 
