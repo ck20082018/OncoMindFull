@@ -1,0 +1,50 @@
+# Backend ignore
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/data/
+backend/uploads/
+backend/logs/
+
+# AI Pipeline ignore
+oncology_ai_assistant/venv/
+oncology_ai_assistant/__pycache__/
+oncology_ai_assistant/*.pyc
+oncology_ai_assistant/logs/
+oncology_ai_assistant/temp/
+oncology_ai_assistant/index/
+oncology_ai_assistant/*.db
+oncology_ai_assistant/oncomind_sa_key.json
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Development
+.env
+.env.*
+!.env.docker
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test files
+test_cases/
+*_test.py
+test_*.py
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Frontend development files (optional)
+# frontend/node_modules/

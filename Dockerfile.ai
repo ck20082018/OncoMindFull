@@ -1,0 +1,65 @@
+# OncoMind AI Pipeline - FastAPI
+# Для Raspberry Pi 5 (ARM64)
+
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+
+# Установка системных зависимостей для OCR и обработки документов
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Копирование requirements и установка зависимостей
+COPY oncology_ai_assistant/requirements.txt .
+
+# Установка зависимостей (без grpc для ARM совместимости)
+RUN pip install --no-cache-dir \
+    fastapi>=0.109.0 \
+    uvicorn[standard]>=0.27.0 \
+    python-multipart>=0.0.6 \
+    streamlit>=1.31.0 \
+    yandexcloud>=0.257.0 \
+    python-dotenv>=1.0.0 \
+    pydantic>=2.5.3 \
+    pydantic-settings>=2.1.0 \
+    pyyaml>=6.0.1 \
+    pandas>=2.1.4 \
+    openpyxl>=3.1.2 \
+    sentence-transformers>=2.3.1 \
+    faiss-cpu>=1.8.0 \
+    numpy>=1.26.3 \
+    scikit-learn>=1.4.0 \
+    loguru>=0.7.2 \
+    tqdm>=4.66.1 \
+    python-dateutil>=2.8.2 \
+    aiofiles>=23.2.1 \
+    tenacity>=8.2.3 \
+    pdfplumber>=0.10.3 \
+    pymupdf>=1.23.8 \
+    pillow>=10.2.0 \
+    requests>=2.31.0 \
+    httpx>=0.26.0
+
+# EasyOCR может быть проблематичным на ARM, устанавливаем упрощённую версию
+RUN pip install --no-cache-dir easyocr>=1.7.0 --no-deps || pip install --no-cache-dir easyocr>=1.7.0
+
+# Копирование кода приложения
+COPY oncology_ai_assistant/ ./oncology_ai_assistant/
+
+WORKDIR /app/oncology_ai_assistant
+
+# Переменные окружения
+ENV PYTHONUNBUFFERED=1
+ENV AI_HOST=0.0.0.0
+ENV AI_PORT=8000
+ENV DEBUG=False
+
+EXPOSE 8000
+
+CMD ["uvicorn", "src.core.main:app", "--host", "0.0.0.0", "--port", "8000"]
