@@ -10,11 +10,11 @@ const isLocalhost = window.location.hostname === 'localhost' ||
 // Production URL - ваш сервер
 const PRODUCTION_URL = 'https://oncomind.ru';
 
-// Local URL - для разработки
-const LOCAL_URL = 'http://127.0.0.1:5000';
+// Local URL - для разработки (пустая строка = относительный URL через nginx)
+const LOCAL_URL = '';
 
 const API_CONFIG = {
-    // Для локальной разработки - используем локальный сервер
+    // Для локальной разработки - используем относительный URL (nginx проксирует /api/*)
     // Для продакшена - используем production URL
     BASE_URL: isLocalhost ? LOCAL_URL : PRODUCTION_URL,
     TIMEOUT: 30000

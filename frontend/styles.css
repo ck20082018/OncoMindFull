@@ -328,33 +328,50 @@ h2::after {
 /* ===== КАРТОЧКИ КОМАНДЫ ===== */
 .team-card {
     text-align: center;
-    padding: 32px 20px;
+    padding: 40px 24px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.team-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 102, 179, 0.15);
 }
 
 .team-photo {
-    width: 160px;
-    height: 160px;
-    margin: 0 auto 24px;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 28px;
     background: var(--gradient-main);
     display: flex;
     align-items: center;
     justify-content: center;
     border: 4px solid white;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 8px 24px rgba(0, 102, 179, 0.2);
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
-    clip-path: circle(45% at 50% 50%);
+    border-radius: 50%;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.team-card:hover .team-photo {
+    box-shadow: 0 12px 32px rgba(0, 102, 179, 0.3);
+    transform: scale(1.05);
 }
 
 .team-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
     display: block;
     position: relative;
     z-index: 1;
+    border-radius: 50%;
+    transition: transform 0.4s ease;
+}
+
+.team-card:hover .team-photo img {
+    transform: scale(1.08);
 }
 
 .team-photo i {
@@ -379,11 +396,10 @@ h2::after {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
-    object-position: center !important;
     display: block !important;
     position: relative;
     z-index: 1;
-    border-radius: 35% !important;
+    border-radius: 50% !important;
 }
 
 .team-name {

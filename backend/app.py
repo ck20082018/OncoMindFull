@@ -149,7 +149,7 @@ app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 # БЕЗОПАСНОСТЬ: Настройка CORS с белым списком
 ALLOWED_ORIGINS = os.environ.get(
     'ALLOWED_ORIGINS',
-    'http://localhost:3000,http://localhost:5500,http://127.0.0.1:5500'
+    'http://localhost,http://localhost:80,http://localhost:3000,http://localhost:5500,http://127.0.0.1:5500'
 ).split(',')
 
 CORS(app, resources={
