@@ -344,7 +344,7 @@ h2::after {
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
-    clip-path: circle(50% at 50% 50%);
+    clip-path: circle(45% at 50% 50%);
 }
 
 .team-photo img {
@@ -383,7 +383,7 @@ h2::after {
     display: block !important;
     position: relative;
     z-index: 1;
-    border-radius: 50% !important;
+    border-radius: 35% !important;
 }
 
 .team-name {
