@@ -7,8 +7,8 @@ const isLocalhost = window.location.hostname === 'localhost' ||
                     window.location.hostname === '127.0.0.1' ||
                     window.location.hostname === '';
 
-// Production URL - ваш сервер
-const PRODUCTION_URL = 'https://oncomind.ru';
+// Production URL - пустой, чтобы использовать относительный путь (nginx проксирует)
+const PRODUCTION_URL = '';
 
 // Local URL - для разработки (пустая строка = относительный URL через nginx)
 const LOCAL_URL = '';
